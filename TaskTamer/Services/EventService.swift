@@ -33,8 +33,10 @@ class EventService {
             $0 == date
         }
         guard let date = date else {
-            throw DeleteFail.noDate
+//            throw DeleteFail.noDate
+            return
         }
+//        let predicate = eventStore.
         let predicate = eventStore.predicateForEvents(withStart: date, end: date.addingTimeInterval(900), calendars: [eventStore.defaultCalendarForNewEvents!])
         let events = eventStore.events(matching: predicate)
         if events.count < 1 {

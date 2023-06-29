@@ -9,8 +9,11 @@ import SwiftUI
 
 struct SortListView: View {
     
-    @StateObject var dragManager = DragManager()
     @Environment(\.editMode) var editMode
+    
+    @ScaledMetric(relativeTo: .body) var scaledPadding: CGFloat = 10
+    
+    @StateObject var dragManager = DragManager()
     
     enum FocusedField {
         case showKeyboard, dismissKeyboard
@@ -27,34 +30,52 @@ struct SortListView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(0..<vm.unsortedTasks.count, id: \.self) { index in
-                    let task = vm.unsortedTasks[index]
-                    SortListDisclosure(vm, task, $taskExpanded)
-                }
-                .onDelete { indexSet in
-                    guard let index = indexSet.first else { return }
-                    let task = vm.unsortedTasks[index]
-                    vm.tasks.removeAll { $0.id == task.id  }
-                }
-                HStack {
-                    TextField("New task...", text: $newTask)
-//                        .focused($isFocused)
-                        .onSubmit {
-                            addTask()
+            ZStack {
+                Color("ListBackground")
+                    .ignoresSafeArea()
+                ScrollView {
+                    GeometryReader { geo in
+                        
+                        VStack(spacing: 0) {
+                            ForEach(0..<vm.unsortedTasks.count, id: \.self) { index in
+                                SortListDisclosure(vm, index, $taskExpanded, geo)
+                                    .background { Color("ListForeground") }
+                            }
+                            .onDelete { indexSet in
+                                guard let index = indexSet.first else { return }
+                                let task = vm.unsortedTasks[index]
+                                vm.tasks.removeAll { $0.id == task.id  }
+                            }
+                            
+                            HStack {
+                                TextField(text: $newTask) {
+                                    Text(newTask)
+                                        .background { Color("ListForeground") }
+                                }
+                                .onSubmit {
+                                    addTask()
+                                }
+                                Button {
+                                    addTask()
+                                } label: {
+                                    Image(systemName: "plus.circle")
+                                        .foregroundColor(.accentColor)
+                                }
+                            }
+                            .padding(.top,scaledPadding)
+                            .padding(.horizontal)
                         }
-                    Button {
-                        addTask()
-                    } label: {
-                        Image(systemName: "plus.circle")
-                            .foregroundColor(.accentColor)
+                        .padding(.bottom, scaledPadding)
+                        .background { Color.primary.colorInvert() }
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
+                
+                .padding(.horizontal)
+                Spacer()
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton()
-                }
+                EditButton()
             }
             .navigationTitle("Sort Tasks")
             .overlay {

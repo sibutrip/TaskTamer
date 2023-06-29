@@ -160,8 +160,8 @@
 			isa = PBXGroup;
 			children = (
 				74EFBD9C2A49C191002C8388 /* SortListView.swift */,
-				74EFBD9B2A49C191002C8388 /* DisclosureRow.swift */,
 				74EFBD9D2A49C191002C8388 /* SortListDisclosure.swift */,
+				74EFBD9B2A49C191002C8388 /* DisclosureRow.swift */,
 			);
 			path = SortListView;
 			sourceTree = "<group>";
