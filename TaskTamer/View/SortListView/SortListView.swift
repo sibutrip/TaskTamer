@@ -25,6 +25,7 @@ struct SortListView: View {
     @State private var dragAction: DragTask = .init(isDragging: false, timeSelection: .noneSelected, keyboardSelection: .dismissKeyboard)
     @State private var sortDidFail: Bool = false
     @State private var taskExpanded: TaskItem?
+    @State private var taskDeleting: TaskItem?
     @State private var disclosure: Bool = false
     
     
@@ -33,24 +34,16 @@ struct SortListView: View {
             ZStack {
                 Color("ListBackground")
                     .ignoresSafeArea()
-                ScrollView {
                     GeometryReader { geo in
-                        
-                        VStack(spacing: 0) {
+                        ScrollView {
+                        LazyVStack(spacing: 0) {
                             ForEach(0..<vm.unsortedTasks.count, id: \.self) { index in
-                                SortListDisclosure(vm, index, $taskExpanded, geo)
+                                SortListDisclosure(vm, index, $taskExpanded, geo, $taskDeleting)
                                     .background { Color("ListForeground") }
                             }
-                            .onDelete { indexSet in
-                                guard let index = indexSet.first else { return }
-                                let task = vm.unsortedTasks[index]
-                                vm.tasks.removeAll { $0.id == task.id  }
-                            }
-                            
                             HStack {
-                                TextField(text: $newTask) {
+                                TextField(text: $newTask, prompt: Text("Add a Task")) {
                                     Text(newTask)
-                                        .background { Color("ListForeground") }
                                 }
                                 .onSubmit {
                                     addTask()
@@ -62,15 +55,14 @@ struct SortListView: View {
                                         .foregroundColor(.accentColor)
                                 }
                             }
-                            .padding(.top,scaledPadding)
-                            .padding(.horizontal)
+                                                        .padding(.top,scaledPadding)
+                                                        .padding(.horizontal)
                         }
                         .padding(.bottom, scaledPadding)
                         .background { Color.primary.colorInvert() }
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
-                
                 .padding(.horizontal)
                 Spacer()
             }

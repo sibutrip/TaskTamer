@@ -19,12 +19,16 @@ struct SortListDisclosure: View {
     
     @Environment(\.editMode) var editMode
     @Binding var taskExpanded: TaskItem?
+    @Binding var taskDeleting: TaskItem?
     @State var deleteModeEnabled = false
+    @State var fullSwipeDelete = false
     
-    @State var offset: Double = 0
+    @State var xOffset: Double = 0
+    @State var yFrame: Double = 1
     
     var body: some View {
         Button {
+            taskDeleting = nil
             if taskExpanded != task {
                 withAnimation {
                     taskExpanded = task
@@ -35,7 +39,7 @@ struct SortListDisclosure: View {
                 }
             }
         } label: {
-            VStack {
+            LazyVStack {
                 HStack {
                     Text(task.name)
                     Spacer()
@@ -46,7 +50,7 @@ struct SortListDisclosure: View {
                 }
                 .padding(.horizontal)
                 .contentShape(Rectangle())
-                .offset(x: taskExpanded == task ? -offset : 0)
+                .offset(x: min(-xOffset,0))
                 Divider()
                     .padding(.leading)
             }
@@ -54,42 +58,82 @@ struct SortListDisclosure: View {
             .overlay {
                 HStack {
                     Color.clear
-                    Rectangle()
-                        .foregroundColor(.red)
-                        .frame(width: offset)
-                        .overlay {
-                            Text("Delete")
-                                .foregroundColor(.white)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.1)
-                        }
+                    Button {
+                        delete()
+                    } label: {
+                        Rectangle()
+                            .scaleEffect(y: yFrame)
+                            .foregroundColor(.red)
+                            .frame(width: max(xOffset, 0))
+                            .overlay {
+                                HStack {
+                                    Text("Delete")
+                                        .foregroundColor(.white)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.1)
+                                        .padding(fullSwipeDelete ? scaledPadding : 0)
+                                    
+                                    if fullSwipeDelete {
+                                        Spacer()
+                                    }
+                                }
+                            }
+                    }
                 }
             }
-            .animation(.default, value: deleteModeEnabled)
+            .animation(.default, value: taskDeleting)
             .gesture(DragGesture()
                 .onChanged { value in
-                    if deleteModeEnabled {
-                        offset = abs(value.translation.width) + geo.size.width / 5
-                        return
+                    taskDeleting = task
+                    withAnimation {
+                        taskExpanded = nil
                     }
-                    if value.translation.width < 0 {
-                        offset = abs(value.translation.width)
+                    if deleteModeEnabled {
+                        if value.translation.width > 0 {
+                            xOffset = (-value.translation.width) + geo.size.width / 5
+                        } else {
+                            xOffset = (-value.translation.width + geo.size.width / 5)
+                        }
+                    } else {
+                        if value.translation.width < 0 {
+                            xOffset = abs(value.translation.width)
+                        }
+                    }
+                    if xOffset > geo.size.width * 2 / 3 {
+                        withAnimation { fullSwipeDelete = true }
+                    } else {
+                        withAnimation { fullSwipeDelete = false }
                     }
                 }
                 .onEnded { value in
+                    if fullSwipeDelete {
+                        delete()
+                        return
+                    }
                     withAnimation {
-                        if offset > geo.size.width / 5 {
-                            offset = geo.size.width / 5
+                        if -value.predictedEndTranslation.width > geo.size.width / 5 {
+                            xOffset = geo.size.width / 5
                             deleteModeEnabled = true
                             return
                         }
-                        offset = .zero
+                        xOffset = .zero
                         deleteModeEnabled = false
+                        taskDeleting = nil
                     }
                 }
             )
         }
         .buttonStyle(.plain)
+        .onChange(of: taskDeleting) { newValue in
+            if newValue != task {
+                withAnimation {
+                    if !fullSwipeDelete {
+                        withAnimation { xOffset = 0 }
+                        deleteModeEnabled = false
+                    }
+                }
+            }
+        }
         
         if taskExpanded == task {
             VStack {
@@ -108,28 +152,23 @@ struct SortListDisclosure: View {
         }
     }
     
-    init(_ vm: ViewModel, _ index: Int, _ taskExpanded: Binding<TaskItem?>, _ geo: GeometryProxy) {
+    func delete() {
+        withAnimation(.easeIn(duration: 0.25)) { xOffset = geo.size.width }
+        withAnimation(.easeIn(duration: 0.25)) { yFrame = 0 }
+        vm.tasks.removeAll { $0 == task }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            xOffset = 0
+            yFrame = 1
+            deleteModeEnabled = false
+            taskDeleting = nil
+        }
+    }
+    
+    init(_ vm: ViewModel, _ index: Int, _ taskExpanded: Binding<TaskItem?>, _ geo: GeometryProxy, _ taskDeleting: Binding<TaskItem?>) {
         self.vm = vm
         self.task = vm.unsortedTasks[index]
         _taskExpanded = taskExpanded
+        _taskDeleting = taskDeleting
         self.geo = geo
-    }
-}
-
-struct SortDisclosureStyle: DisclosureGroupStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        Group {
-            VStack(alignment: .leading) {
-                Button {
-                    configuration.isExpanded.toggle()
-                } label: {
-                    configuration.label
-                }
-                if configuration.isExpanded {
-                    configuration.content
-                        .listStyle(.plain)
-                }
-            }
-        }
     }
 }
