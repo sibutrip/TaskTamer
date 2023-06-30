@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct SortListView: View {
-    
-    @Environment(\.editMode) var editMode
-    
+        
     @ScaledMetric(relativeTo: .body) var scaledPadding: CGFloat = 10
     
     @StateObject var dragManager = DragManager()
@@ -34,8 +32,8 @@ struct SortListView: View {
             ZStack {
                 Color("ListBackground")
                     .ignoresSafeArea()
-                    GeometryReader { geo in
-                        ScrollView {
+                GeometryReader { geo in
+                    ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(0..<vm.unsortedTasks.count, id: \.self) { index in
                                 SortListDisclosure(vm, index, $taskExpanded, geo, $taskDeleting)
@@ -46,7 +44,9 @@ struct SortListView: View {
                                     Text(newTask)
                                 }
                                 .onSubmit {
-                                    addTask()
+                                    (0...10).forEach { _ in
+                                        addTask()
+                                    }
                                 }
                                 Button {
                                     addTask()
@@ -55,8 +55,8 @@ struct SortListView: View {
                                         .foregroundColor(.accentColor)
                                 }
                             }
-                                                        .padding(.top,scaledPadding)
-                                                        .padding(.horizontal)
+                            .padding(.top,scaledPadding)
+                            .padding(.horizontal)
                         }
                         .padding(.bottom, scaledPadding)
                         .background { Color.primary.colorInvert() }
@@ -65,9 +65,6 @@ struct SortListView: View {
                 }
                 .padding(.horizontal)
                 Spacer()
-            }
-            .toolbar {
-                EditButton()
             }
             .navigationTitle("Sort Tasks")
             .overlay {
@@ -87,7 +84,7 @@ struct SortListView: View {
             return
         }
         vm.tasks.append(TaskItem(name: newTask))
-        newTask.removeAll()
+        //        newTask.removeAll()
         isFocused = true
     }
 }
