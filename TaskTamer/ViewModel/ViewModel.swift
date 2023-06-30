@@ -27,7 +27,8 @@ class ViewModel: ObservableObject {
     
     public func sortTask(_ task: TaskItem, _ time: TimeSelection) async throws {
         var task = task
-        try await task.sort(at: time)
+        let duration: TimeInterval = 900 // 15 mins
+        try await task.sort(duration: duration, at: time, within: tasks)
         var tasks = self.tasks
         tasks = tasks.filter {
             $0.id != task.id
@@ -40,15 +41,15 @@ class ViewModel: ObservableObject {
     public func unscheduleTask(_ task: TaskItem) {
         var task = task
         var tasks = self.tasks
-        if let date = task.scheduledDate {
+        if let _ = task.startDate {
             if task.sortStatus.sortName != "Skipped"  {
-                try? eventService.deleteEvent(for: date)
+                try? eventService.deleteEvent(for: task)
             }
         }
         tasks = tasks.filter {
             $0.id != task.id
         }
-        task.scheduledDate = nil
+        task.startDate = nil
         task.sortStatus = .unsorted
         tasks.append(task)
         DirectoryService.writeModelToDisk(tasks)
@@ -57,8 +58,8 @@ class ViewModel: ObservableObject {
     
     public func deleteTask(_ task: TaskItem) throws {
         var tasks = self.tasks
-        if let date = task.scheduledDate {
-            try? eventService.deleteEvent(for: date)
+        if let _ = task.startDate {
+            try? eventService.deleteEvent(for: task)
         }
         tasks = tasks.filter {
             $0.id != task.id

@@ -19,7 +19,7 @@ struct AllTasksView: View {
                     if first.sortStatus == .unsorted {
                         return first.name < second.name
                     } else {
-                        if let firstDate = first.scheduledDate, let secondDate = second.scheduledDate {
+                        if let firstDate = first.startDate, let secondDate = second.startDate {
                             return firstDate < secondDate
                         }
                     }

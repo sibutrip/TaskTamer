@@ -12,33 +12,39 @@ enum ScheduleError: Error {
 }
 
 struct TaskItem: Identifiable, Equatable, Codable {
-    let id: UUID
+    var id: String
     let name: String
     var sortStatus: SortStatus = .unsorted
-    var scheduledDate: Date?
+    var startDate: Date?
+    var endDate: Date?
     var scheduleDescription: String {
         switch sortStatus {
         case .sorted(_):
-            return "scheduled at \(scheduledDate?.formatted() ?? "")"
+            if DateComponents(calendar: Calendar.autoupdatingCurrent, timeZone: .autoupdatingCurrent, day: Calendar.autoupdatingCurrent.component(.day, from: Date())) != DateComponents(calendar: Calendar.autoupdatingCurrent, timeZone: .autoupdatingCurrent, day: Calendar.autoupdatingCurrent.component(.day, from: self.startDate ?? Date.distantPast)) {
+                return "\(startDate?.formatted() ?? "") to \(endDate?.formatted(date: .omitted, time: .shortened) ?? "")"
+            } else {
+                return "Today, \(startDate?.formatted(date: .omitted, time: .shortened) ?? "") to \(endDate?.formatted(date: .omitted, time: .shortened) ?? "")"
+            }
         case .skipped(_):
-            return "skipped until \(scheduledDate?.formatted() ?? "")"
+            return "skipped until \(startDate?.formatted() ?? "")"
         case .unsorted:
             return "unsorted"
         }
     }
     
     init(name: String) {
-        id = UUID()
+        id = UUID().uuidString
         self.name = name
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(UUID.self, forKey: .id)
+        self.id = try container.decode(String.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
-        self.scheduledDate = try container.decodeIfPresent(Date.self, forKey: .scheduledDate)
-        if let scheduledDate = scheduledDate {
-            if Date() > scheduledDate {
+        self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
+        self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
+        if let endDate = endDate {
+            if Date() > endDate {
                 self.sortStatus = .unsorted
             } else {
                 self.sortStatus = try container.decode(SortStatus.self, forKey: .sortStatus)
@@ -46,27 +52,26 @@ struct TaskItem: Identifiable, Equatable, Codable {
         }
     }
     
-    mutating func sort(at time: TimeSelection) async throws {
-        let midnight = DateComponents(calendar: Calendar.current, timeZone: .autoupdatingCurrent, year: Calendar.current.component(.year, from: Date()), month: Calendar.current.component(.month, from: Date()), day: Calendar.current.component(.day, from: Date()), hour: 0, minute: 0, second: 0)
+    mutating func sort(duration: TimeInterval, at time: TimeSelection, within tasks: [TaskItem]) async throws {
         switch time {
         case .morning, .afternoon, .evening:
             let eventService = EventService.shared
-            let scheduledDate = eventService.selectDate(from: time)
+            let scheduledDate = eventService.selectDate(duration: duration, from: time, within: tasks)
             guard let scheduledDate = scheduledDate else {
                 throw ScheduleError.scheduleFull
             }
-            self.scheduledDate = scheduledDate
+            (self.startDate, self.endDate) = scheduledDate
             self.sortStatus = .sorted(time)
-            await eventService.scheduleEvent(for: self)
+            try await eventService.scheduleEvent(for: &self)
         case .skip1:
             self.sortStatus = .skipped(time)
-            self.scheduledDate = Calendar.current.date(byAdding: .day, value: 1, to: midnight.date!)!
+            self.startDate = Calendar.current.date(byAdding: .day, value: 1, to: DateComponents.midnight.date!)!
         case .skip3:
             self.sortStatus = .skipped(time)
-            self.scheduledDate = Calendar.current.date(byAdding: .day, value: 3, to: midnight.date!)!
+            self.startDate = Calendar.current.date(byAdding: .day, value: 3, to: DateComponents.midnight.date!)!
         case .skip7:
             self.sortStatus = .skipped(time)
-            self.scheduledDate = Calendar.current.date(byAdding: .day, value: 7, to: midnight.date!)!
+            self.startDate = Calendar.current.date(byAdding: .day, value: 7, to: DateComponents.midnight.date!)!
         case .noneSelected:
             return
         }
@@ -74,12 +79,12 @@ struct TaskItem: Identifiable, Equatable, Codable {
     }
     
     mutating private func checkSkipDate() {
-        guard let skipUntilDate = self.scheduledDate else {
+        guard let skipUntilDate = self.startDate else {
             return
         }
         if Date() > skipUntilDate {
             self.sortStatus = .unsorted
-            self.scheduledDate = nil
+            self.startDate = nil
         }
     }
 }

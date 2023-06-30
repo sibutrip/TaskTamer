@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		744C3ACE2A4F7EEB00CE124E /* DateComponents+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */; };
 		745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745376B82A4B1FF2000382A0 /* SortSwipeView.swift */; };
 		74EFBDB92A49C191002C8388 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD8F2A49C191002C8388 /* ViewModel.swift */; };
 		74EFBDBA2A49C191002C8388 /* ADHDBrainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */; };
@@ -41,6 +42,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extension.swift"; sourceTree = "<group>"; };
 		745376B82A4B1FF2000382A0 /* SortSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortSwipeView.swift; sourceTree = "<group>"; };
 		748DAE3C29FD930D003A3B06 /* TaskTamer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskTamer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74EFBD8F2A49C191002C8388 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				74EFBD942A49C191002C8388 /* TimeSelection.swift */,
 				74EFBD952A49C191002C8388 /* TaskItem.swift */,
 				74EFBD962A49C191002C8388 /* SortStatus.swift */,
+				744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				74EFBDC62A49C191002C8388 /* Time.swift in Sources */,
+				744C3ACE2A4F7EEB00CE124E /* DateComponents+Extension.swift in Sources */,
 				74EFBDD32A49C191002C8388 /* ContentView.swift in Sources */,
 				74EFBDCF2A49C191002C8388 /* Color+Extension.swift in Sources */,
 				74EFBDC42A49C191002C8388 /* SkipTab.swift in Sources */,
