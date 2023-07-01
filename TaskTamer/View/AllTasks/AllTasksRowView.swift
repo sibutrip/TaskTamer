@@ -19,7 +19,7 @@ struct AllTasksRowView: View {
         case .sorted(let status):
             switch status {
                 
-            case .morning, .afternoon, .evening:
+            case .morning, .afternoon, .evening, .other:
                 return Color.green
             default:
                 return Color.black

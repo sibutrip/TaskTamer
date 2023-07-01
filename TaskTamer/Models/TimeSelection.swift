@@ -8,7 +8,7 @@
 import Foundation
 
 enum TimeSelection: String, Equatable, Codable {
-    case morning, afternoon, evening, skip1, skip3, skip7, noneSelected
+    case morning, afternoon, evening, skip1, skip3, skip7, noneSelected, other
 }
 
 //enum TimeSelection: Equatable {

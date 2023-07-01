@@ -16,3 +16,9 @@ extension DateComponents {
         DateComponents(calendar: Calendar.current, timeZone: .autoupdatingCurrent, year: Calendar.current.component(.year, from: Date()), month: Calendar.current.component(.month, from: Date()), day: Calendar.current.component(.day, from: Date()), hour: hour, minute: 0, second: 0)
     }
 }
+
+extension Date {
+    static func hourAddingDayIfNeeded(from hour: Int) -> Date {
+        DateComponents.hour(from: hour).date! > Date() ? DateComponents.hour(from: hour).date! : DateComponents.hour(from: hour).date!.addingTimeInterval(86400)
+    }
+}

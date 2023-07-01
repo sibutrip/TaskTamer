@@ -88,24 +88,19 @@ class EventService {
             event.addAlarm(.init(absoluteDate: startDate))
             try eventStore.save(event, span: .thisEvent)
             task.id = event.eventIdentifier
-            
-            //            self.usedDates.append(scheduledDate)
-            //                print(self.usedDates)
         } else { fatalError() }
     }
     
     public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem]) -> (Date,Date)? {
-//        let usedDates = tasks.map { $0.startDate }
         let availableDates = fetchAvailableDates(for: timeSelection, within: tasks)
             .flatMap { (startTime, endTime) in
                 let distance = startTime.distance(to: endTime)
                 let numberOfAvailableSlots = Int(distance / duration) // rounds down
-                let dates = (0..<numberOfAvailableSlots).map { index in
-                    return startTime.addingTimeInterval(TimeInterval(index - 1) * duration)
+                return (0..<numberOfAvailableSlots).map { index in
+                    return startTime.addingTimeInterval(TimeInterval(index) * duration)
                 }
-                return dates
             }
-        availableDates.forEach { print($0.description(with: .autoupdatingCurrent)) }
+//        availableDates.forEach { print($0.description(with: .autoupdatingCurrent)) }
         
         let startDate = availableDates.randomElement()
         let endDate = startDate?.addingTimeInterval(duration)
@@ -116,12 +111,9 @@ class EventService {
     
     /// returns [(start date, end date)] for free times in given TimeSelection
     private func fetchAvailableDates(for timeSelection: TimeSelection, within tasks: [TaskItem]) -> [(Date,Date)] {
-        
-        let cal = Calendar(identifier: .gregorian)
-        let date = Date()
-        let midnight = DateComponents.midnight.date!
         var startDate: Date
         var endDate: Date
+        var midnight = DateComponents.midnight.date!
         switch timeSelection {
         case .morning:
             startDate = DateComponents.hour(from: 8).date!
@@ -139,10 +131,12 @@ class EventService {
         if Date() > endDate {
             startDate = startDate.addingTimeInterval(86400)
             endDate = endDate.addingTimeInterval(86400)
+            midnight = midnight.addingTimeInterval(86400)
         }
         
-        let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: [eventStore.defaultCalendarForNewEvents!])
+        let predicate = eventStore.predicateForEvents(withStart: midnight, end: endDate, calendars: [eventStore.defaultCalendarForNewEvents!])
         let events = eventStore.events(matching: predicate)
+            .filter { $0.endDate < endDate && $0.endDate > startDate }
         if events.isEmpty { return [(startDate,endDate)] }
         var freeTime: [(Date,Date)] = (0..<events.count).map { index in
             let event = events[index]

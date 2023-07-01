@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AllTasksView: View {
     @ObservedObject var vm: ViewModel
+    @Environment(\.scenePhase) var scenePhase
     
     var sortedTaskTimes: [Dictionary<String, [TaskItem]>.Element] {
         var taskTimes: [String:[TaskItem]] = [:]
@@ -41,6 +42,10 @@ struct AllTasksView: View {
             } else if first.key == "Evening" {
                 return true
             } else if second.key == "Evening" {
+                return false
+            } else if first.key == "Other" {
+                return true
+            } else if second.key == "Other" {
                 return false
             } else if first.key == "Skipped" {
                 return true
@@ -83,6 +88,9 @@ struct AllTasksView: View {
                 }
             }
             .navigationTitle("All Tasks")
+            .onChange(of: scenePhase) { newValue in
+                if newValue == .active { vm.refreshTasks() }
+            }
         }
     }
 }

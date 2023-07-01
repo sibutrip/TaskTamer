@@ -26,11 +26,18 @@ struct TaskItem: Identifiable, Equatable, Codable {
                 return "Today, \(startDate?.formatted(date: .omitted, time: .shortened) ?? "") to \(endDate?.formatted(date: .omitted, time: .shortened) ?? "")"
             }
         case .skipped(_):
-            return "skipped until \(startDate?.formatted() ?? "")"
+            return "skipped until \(startDate?.formatted(date:.abbreviated, time: .omitted) ?? "")"
         case .unsorted:
             return "unsorted"
         }
     }
+    
+    static var morningStartTime = Date.hourAddingDayIfNeeded(from: 8)
+    static var morningEndTime = Date.hourAddingDayIfNeeded(from: 12)
+    static var afternoonStartTime = Date.hourAddingDayIfNeeded(from: 13)
+    static var afternoonEndTime = Date.hourAddingDayIfNeeded(from: 17)
+    static var eveningStartTime = Date.hourAddingDayIfNeeded(from: 17)
+    static var eveningEndTime = Date.hourAddingDayIfNeeded(from: 21)
     
     init(name: String) {
         id = UUID().uuidString
@@ -66,13 +73,18 @@ struct TaskItem: Identifiable, Equatable, Codable {
         case .skip1:
             self.sortStatus = .skipped(time)
             self.startDate = Calendar.current.date(byAdding: .day, value: 1, to: DateComponents.midnight.date!)!
+            self.endDate = Calendar.current.date(byAdding: .day, value: 1, to: DateComponents.midnight.date!)!
         case .skip3:
             self.sortStatus = .skipped(time)
             self.startDate = Calendar.current.date(byAdding: .day, value: 3, to: DateComponents.midnight.date!)!
+            self.endDate = Calendar.current.date(byAdding: .day, value: 3, to: DateComponents.midnight.date!)!
         case .skip7:
             self.sortStatus = .skipped(time)
             self.startDate = Calendar.current.date(byAdding: .day, value: 7, to: DateComponents.midnight.date!)!
+            self.endDate = Calendar.current.date(byAdding: .day, value: 7, to: DateComponents.midnight.date!)!
         case .noneSelected:
+            return
+        case .other:
             return
         }
         return

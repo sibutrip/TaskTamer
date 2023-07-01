@@ -7,10 +7,11 @@
 
 import Foundation
 import EventKit
+import SwiftUI
 
 @MainActor
 class ViewModel: ObservableObject {
-    
+        
     let eventService: EventService
     @Saving var tasks: [TaskItem] {
         didSet {
@@ -24,6 +25,30 @@ class ViewModel: ObservableObject {
     }
     
     @Published var sortDidFail = false
+    
+    public func refreshTasks() {
+        let tasks = eventService.updateTaskTimes(for: tasks)
+        self.tasks = refreshSortStatus(for: tasks)
+    }
+    
+    private func refreshSortStatus(for tasks: [TaskItem]) -> [TaskItem] {
+        return tasks.map { task in
+            var task = task
+            guard let startDate = task.startDate, let _ = task.endDate else { return task }
+            print(TaskItem.morningStartTime,TaskItem.morningEndTime)
+
+            if startDate > TaskItem.morningStartTime && startDate < TaskItem.morningEndTime {
+                task.sortStatus = .sorted(.morning)
+            } else if startDate > TaskItem.afternoonStartTime && startDate < TaskItem.afternoonEndTime {
+                task.sortStatus = .sorted(.afternoon)
+            } else if startDate > TaskItem.eveningStartTime && startDate < TaskItem.eveningEndTime {
+                task.sortStatus = .sorted(.evening)
+            } else {
+                task.sortStatus = .sorted(.other)
+            }
+            return task
+        }
+    }
     
     public func sortTask(_ task: TaskItem, _ time: TimeSelection) async throws {
         var task = task

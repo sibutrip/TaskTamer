@@ -22,6 +22,8 @@ enum SortStatus: Equatable, Codable {
                 return "Afternoon"
             case .evening:
                 return "Evening"
+            case .other:
+                return "Other"
             default:
                 return ""
             }
