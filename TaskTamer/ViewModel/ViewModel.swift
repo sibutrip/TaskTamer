@@ -36,6 +36,9 @@ class ViewModel: ObservableObject {
             var task = task
             guard let startDate = task.startDate, let _ = task.endDate else { return task }
             print(TaskItem.morningStartTime,TaskItem.morningEndTime)
+            print(TaskItem.afternoonStartTime,TaskItem.afternoonEndTime)
+            print(TaskItem.eveningStartTime,TaskItem.eveningEndTime)
+
 
             if startDate >= TaskItem.morningStartTime && startDate < TaskItem.morningEndTime {
                 task.sortStatus = .sorted(.morning)
@@ -100,6 +103,13 @@ class ViewModel: ObservableObject {
         } else {
             self.tasks = []
         }
+    }
+    
+    public func openCalendar(for task: TaskItem) async {
+        guard let date = task.startDate, let url = URL(string: "calshow:\(date.timeIntervalSinceReferenceDate)") else {
+              return
+            }
+        await UIApplication.shared.open(url)
     }
     
     init() {

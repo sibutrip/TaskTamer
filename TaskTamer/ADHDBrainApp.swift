@@ -13,15 +13,6 @@ struct TaskTamerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-//            TextField("something", text: $text)
-//            List {
-//                ForEach(0...1, id: \.self) { text in
-//                    Text(text.description)
-//                }
-//                .onDelete { index in
-//                    print("deleted!")
-//                }
-//            }
         }
     }
 }

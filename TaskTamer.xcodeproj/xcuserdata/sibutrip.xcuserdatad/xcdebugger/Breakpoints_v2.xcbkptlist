@@ -16,20 +16,20 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "858F2946-F5CC-4CBD-BDCB-27DAED359B56"
-            shouldBeEnabled = "Yes"
+            uuid = "A8AE440B-D443-4218-B483-109682F99776"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TaskTamer/ViewModel/ViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
             landmarkName = "refreshSortStatus(for:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "858F2946-F5CC-4CBD-BDCB-27DAED359B56 - f859e68857cecc3a"
+                  uuid = "A8AE440B-D443-4218-B483-109682F99776 - f859e68857cecc78"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -39,12 +39,12 @@
                   urlString = "file:///Users/sibutrip/Documents/XCode%20Projects/TaskTamer/TaskTamer/ViewModel/ViewModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40"
-                  offsetFromSymbolStart = "1144">
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "1620">
                </Location>
                <Location
-                  uuid = "858F2946-F5CC-4CBD-BDCB-27DAED359B56 - f859e68857cecc3a"
+                  uuid = "A8AE440B-D443-4218-B483-109682F99776 - f859e68857cecc59"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -54,9 +54,9 @@
                   urlString = "file:///Users/sibutrip/Documents/XCode%20Projects/TaskTamer/TaskTamer/ViewModel/ViewModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40"
-                  offsetFromSymbolStart = "1148">
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "1408">
                </Location>
             </Locations>
          </BreakpointContent>
