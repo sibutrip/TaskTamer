@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct TaskTamerApp: App {
-    @State var text = ""
     var body: some Scene {
         WindowGroup {
             ContentView()
