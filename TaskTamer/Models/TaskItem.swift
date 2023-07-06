@@ -12,7 +12,8 @@ enum ScheduleError: Error {
 }
 
 struct TaskItem: Identifiable, Equatable, Codable {
-    var id: String
+    let id: UUID
+    var eventID: String?
     let name: String
     var sortStatus: SortStatus = .unsorted
     var startDate: Date?
@@ -40,13 +41,14 @@ struct TaskItem: Identifiable, Equatable, Codable {
     static var eveningEndTime = Date.hourAddingDayIfNeeded(from: 21)
     
     init(name: String) {
-        id = UUID().uuidString
+        id = UUID()
         self.name = name
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(String.self, forKey: .id)
+        self.id = try container.decode(UUID.self, forKey: .id)
+        self.eventID = try container.decode(String?.self, forKey: .eventID)
         self.name = try container.decode(String.self, forKey: .name)
         self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
         self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
@@ -63,7 +65,7 @@ struct TaskItem: Identifiable, Equatable, Codable {
         switch time {
         case .morning, .afternoon, .evening:
             let eventService = EventService.shared
-            let scheduledDate = eventService.selectDate(duration: duration, from: time, within: tasks)
+            let scheduledDate = await eventService.selectDate(duration: duration, from: time, within: tasks)
             guard let scheduledDate = scheduledDate else {
                 throw ScheduleError.scheduleFull
             }

@@ -26,7 +26,8 @@ class EventService {
     private let eventStore: EKEventStore
     
     public func deleteEvent(for task: TaskItem) throws {
-        let event = eventStore.event(withIdentifier: task.id)
+        guard let eventID = task.eventID else { return }
+        let event = eventStore.event(withIdentifier: eventID)
         if let event = event {
             try eventStore.remove(event, span: .thisEvent)
         } else {
@@ -61,7 +62,7 @@ class EventService {
     public func updateTaskTimes(for tasks: [TaskItem]) -> [TaskItem] {
         return tasks.map { task in
             var task = task
-            guard let event = eventStore.event(withIdentifier: task.id) else { return task }
+            guard let eventID = task.eventID, let event = eventStore.event(withIdentifier: eventID) else { return task }
             let startDate = event.startDate
             let endDate = event.endDate
             task.startDate = startDate
@@ -71,12 +72,6 @@ class EventService {
     }
     
     public func scheduleEvent(for task: inout TaskItem) async throws {
-        if firstTimeAddingEvent {
-            guard await requestCalendarPermission() else {
-                return
-            }
-            firstTimeAddingEvent = false
-        }
         if try await eventStore.requestAccess(to: .event) {
             
             guard let startDate = task.startDate else { return }
@@ -87,11 +82,17 @@ class EventService {
             event.calendar = eventStore.defaultCalendarForNewEvents
             event.addAlarm(.init(absoluteDate: startDate))
             try eventStore.save(event, span: .thisEvent)
-            task.id = event.eventIdentifier
+            task.eventID = event.eventIdentifier
         } else { fatalError() }
     }
     
-    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem]) -> (Date,Date)? {
+    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem]) async -> (Date,Date)? {
+        if firstTimeAddingEvent {
+            guard await requestCalendarPermission() else {
+                return nil 
+            }
+            firstTimeAddingEvent = false
+        }
         let availableDates = fetchAvailableDates(for: timeSelection, within: tasks)
             .flatMap { (startTime, endTime) in
                 let distance = startTime.distance(to: endTime)
