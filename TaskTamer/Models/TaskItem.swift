@@ -13,7 +13,7 @@ enum ScheduleError: Error {
 
 struct TaskItem: Identifiable, Equatable, Codable {
     let id: UUID
-    var eventID: String?
+    var eventID: String
     let name: String
     var sortStatus: SortStatus = .unsorted
     var startDate: Date?
@@ -42,13 +42,14 @@ struct TaskItem: Identifiable, Equatable, Codable {
     
     init(name: String) {
         id = UUID()
+        eventID = ""
         self.name = name
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(UUID.self, forKey: .id)
-        self.eventID = try container.decode(String?.self, forKey: .eventID)
+        self.eventID = try! container.decode(String.self, forKey: .eventID)
         self.name = try container.decode(String.self, forKey: .name)
         self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
         self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)

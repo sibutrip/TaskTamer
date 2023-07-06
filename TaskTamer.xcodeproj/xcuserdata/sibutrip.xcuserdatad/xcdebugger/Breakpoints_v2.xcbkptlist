@@ -17,7 +17,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "858F2946-F5CC-4CBD-BDCB-27DAED359B56"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TaskTamer/ViewModel/ViewModel.swift"
@@ -27,6 +27,38 @@
             endingLineNumber = "40"
             landmarkName = "refreshSortStatus(for:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "858F2946-F5CC-4CBD-BDCB-27DAED359B56 - f859e68857cecc3a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (TaskTamer.TaskItem) -&gt; TaskTamer.TaskItem in TaskTamer.ViewModel.refreshSortStatus(for: Swift.Array&lt;TaskTamer.TaskItem&gt;) -&gt; Swift.Array&lt;TaskTamer.TaskItem&gt;"
+                  moduleName = "TaskTamer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/sibutrip/Documents/XCode%20Projects/TaskTamer/TaskTamer/ViewModel/ViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "1144">
+               </Location>
+               <Location
+                  uuid = "858F2946-F5CC-4CBD-BDCB-27DAED359B56 - f859e68857cecc3a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (TaskTamer.TaskItem) -&gt; TaskTamer.TaskItem in TaskTamer.ViewModel.refreshSortStatus(for: Swift.Array&lt;TaskTamer.TaskItem&gt;) -&gt; Swift.Array&lt;TaskTamer.TaskItem&gt;"
+                  moduleName = "TaskTamer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/sibutrip/Documents/XCode%20Projects/TaskTamer/TaskTamer/ViewModel/ViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "1148">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

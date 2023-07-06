@@ -37,11 +37,11 @@ class ViewModel: ObservableObject {
             guard let startDate = task.startDate, let _ = task.endDate else { return task }
             print(TaskItem.morningStartTime,TaskItem.morningEndTime)
 
-            if startDate > TaskItem.morningStartTime && startDate < TaskItem.morningEndTime {
+            if startDate >= TaskItem.morningStartTime && startDate < TaskItem.morningEndTime {
                 task.sortStatus = .sorted(.morning)
-            } else if startDate > TaskItem.afternoonStartTime && startDate < TaskItem.afternoonEndTime {
+            } else if startDate >= TaskItem.afternoonStartTime && startDate < TaskItem.afternoonEndTime {
                 task.sortStatus = .sorted(.afternoon)
-            } else if startDate > TaskItem.eveningStartTime && startDate < TaskItem.eveningEndTime {
+            } else if startDate >= TaskItem.eveningStartTime && startDate < TaskItem.eveningEndTime {
                 task.sortStatus = .sorted(.evening)
             } else {
                 task.sortStatus = .sorted(.other)

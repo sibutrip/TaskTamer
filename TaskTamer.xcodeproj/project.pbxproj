@@ -233,8 +233,8 @@
 		74EFBDD82A49C2D6002C8388 /* AllTasks */ = {
 			isa = PBXGroup;
 			children = (
-				74EFBDAF2A49C191002C8388 /* AllTasksRowView.swift */,
 				74EFBDB02A49C191002C8388 /* AllTasksView.swift */,
+				74EFBDAF2A49C191002C8388 /* AllTasksRowView.swift */,
 			);
 			path = AllTasks;
 			sourceTree = "<group>";

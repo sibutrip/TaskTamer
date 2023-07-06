@@ -26,8 +26,8 @@ class EventService {
     private let eventStore: EKEventStore
     
     public func deleteEvent(for task: TaskItem) throws {
-        guard let eventID = task.eventID else { return }
-        let event = eventStore.event(withIdentifier: eventID)
+//        guard let eventID = task.eventID else { return }
+        let event = eventStore.event(withIdentifier: task.eventID)
         if let event = event {
             try eventStore.remove(event, span: .thisEvent)
         } else {
@@ -62,7 +62,8 @@ class EventService {
     public func updateTaskTimes(for tasks: [TaskItem]) -> [TaskItem] {
         return tasks.map { task in
             var task = task
-            guard let eventID = task.eventID, let event = eventStore.event(withIdentifier: eventID) else { return task }
+//            guard let eventID = task.eventID,
+            guard let event = eventStore.event(withIdentifier: task.eventID) else { return task }
             let startDate = event.startDate
             let endDate = event.endDate
             task.startDate = startDate
@@ -89,7 +90,7 @@ class EventService {
     public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem]) async -> (Date,Date)? {
         if firstTimeAddingEvent {
             guard await requestCalendarPermission() else {
-                return nil 
+                return nil
             }
             firstTimeAddingEvent = false
         }
