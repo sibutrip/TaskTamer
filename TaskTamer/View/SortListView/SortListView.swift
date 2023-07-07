@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SortListView: View {
-        
+    
     @ScaledMetric(relativeTo: .body) var scaledPadding: CGFloat = 10
     
     @StateObject var dragManager = DragManager()
@@ -44,9 +44,9 @@ struct SortListView: View {
                                     Text(newTask)
                                 }
                                 .onSubmit {
-                                    (0...10).forEach { _ in
-                                        addTask()
-                                    }
+                                    //                                    (0...10).forEach { _ in
+                                    addTask()
+                                    //                                    }
                                 }
                                 Button {
                                     addTask()
@@ -72,8 +72,26 @@ struct SortListView: View {
                     Text("You have no unsorted tasks!")
                 }
             }
-            .alert("Your schedule at that time full. Try scheduling this event at a different time.", isPresented: $vm.sortDidFail) {
-                Button("ok") { vm.sortDidFail = false }
+            .alert("Your schedule at that time full. Try scheduling this event at a different time.", isPresented: $vm.scheduleFull) {
+                Button("ok") { vm.scheduleFull = false }
+            }
+            .alert("Enable Calendar permissions in your Settings to schedule an event.", isPresented: $vm.noPermission) {
+                HStack {
+                    Button("No thanks") { vm.noPermission = false }
+                    Button("Take me there") {
+//                        vm.noPermission = false
+                        Task {
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                // Ask the system to open that URL.
+                                await UIApplication.shared.open(url)
+                            }
+                        }
+                    }
+                    .keyboardShortcut(.defaultAction)
+                }
+            }
+            .alert("An unknown error occured. Please submit a bug report ;)", isPresented: $vm.unknownError) {
+                Button("Ok") { vm.unknownError = false }
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -89,7 +107,7 @@ struct SortListView: View {
             return
         }
         vm.tasks.append(TaskItem(name: newTask))
-        //        newTask.removeAll()
+        newTask.removeAll()
         isFocused = true
     }
 }

@@ -22,7 +22,7 @@ struct SortSwipeView: View {
                     Text(task.name)
                         .swipeActions(edge: .leading, allowsFullSwipe: false) {
                             Button {
-                                Task { try await vm.sortTask(task, .skip1) }
+                                Task { await vm.sortTask(task, .skip1) }
                             } label: {
                                 Label("Delete", image: "backward.1")
                             }
@@ -30,7 +30,7 @@ struct SortSwipeView: View {
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: false) {
                             Button {
-                                Task { try await vm.sortTask(task, .skip3) }
+                                Task { await vm.sortTask(task, .skip3) }
                             } label: {
                                 Label("Delete", image: "backward.3")
                             }
@@ -38,7 +38,7 @@ struct SortSwipeView: View {
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: false) {
                             Button {
-                                Task { try await vm.sortTask(task, .skip7) }
+                                Task { await vm.sortTask(task, .skip7) }
                             } label: {
                                 Label("Delete", image: "backward.7")
                             }
@@ -46,7 +46,7 @@ struct SortSwipeView: View {
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button {
-                                Task { try await vm.sortTask(task, .evening) }
+                                Task { await vm.sortTask(task, .evening) }
                             } label: {
                                 Label("Delete", systemImage: "moon")
                             }
@@ -54,7 +54,7 @@ struct SortSwipeView: View {
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button {
-                                Task { try await vm.sortTask(task, .afternoon) }
+                                Task { await vm.sortTask(task, .afternoon) }
                             } label: {
                                 Label("Delete", systemImage: "sunset")
                             }
@@ -62,7 +62,7 @@ struct SortSwipeView: View {
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button {
-                                Task { try await vm.sortTask(task, .morning) }
+                                Task { await vm.sortTask(task, .morning) }
                             } label: {
                                 Label("Delete", systemImage: "sunrise")
                             }
@@ -99,9 +99,9 @@ struct SortSwipeView: View {
                     Text("You have no tasks!")
                 }
             }
-            .alert("Your schedule at that time full. Try scheduling this event at a different time.", isPresented: $vm.sortDidFail) {
-                Button("ok") { vm.sortDidFail = false }
-            }
+//            .alert("Your schedule at that time full. Try scheduling this event at a different time.", isPresented: $vm.sortDidFail) {
+//                Button("ok") { vm.sortDidFail = false }
+//            }
         }
     }
     

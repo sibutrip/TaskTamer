@@ -59,7 +59,7 @@ struct PreviousTaskSheet: View {
                     }
                 }
             }
-            .navigationTitle("Complete Tasks")
+            .navigationTitle("Previous Tasks")
         }
     }
     

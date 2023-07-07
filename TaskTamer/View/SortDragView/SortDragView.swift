@@ -36,13 +36,13 @@ struct SortDragView: View {
                                         .onPreferenceChange(DropPreference.self) {
                                             dropTask in
                                             Task {
-                                                do {
-                                                    try await vm.sortTask(dropTask!.task, dropTask!.timeSelection)
-                                                } catch {
-                                                    print("sort is full")
-                                                    DragManager.sortDidFail = true
-                                                    sortDidFail = true
-                                                }
+//                                                do {
+                                                    await vm.sortTask(dropTask!.task, dropTask!.timeSelection)
+//                                                } catch {
+//                                                    print("sort is full")
+//                                                    DragManager.sortDidFail = true
+//                                                    sortDidFail = true
+//                                                }
                                             }
                                         }
                                         .onPreferenceChange(DismissKeyboardPreference.self) { dismiss in

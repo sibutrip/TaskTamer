@@ -7,10 +7,6 @@
 
 import Foundation
 
-enum ScheduleError: Error {
-    case scheduleFull
-}
-
 struct TaskItem: Identifiable, Equatable, Codable {
     let id: UUID
     var eventID: String
@@ -75,9 +71,9 @@ struct TaskItem: Identifiable, Equatable, Codable {
         switch time {
         case .morning, .afternoon, .evening:
             let eventService = EventService.shared
-            let scheduledDate = await eventService.selectDate(duration: duration, from: time, within: tasks)
+            let scheduledDate = try await eventService.selectDate(duration: duration, from: time, within: tasks)
             guard let scheduledDate = scheduledDate else {
-                throw ScheduleError.scheduleFull
+                throw EventServiceError.scheduleFull
             }
             (self.startDate, self.endDate) = scheduledDate
             self.sortStatus = .sorted(time)

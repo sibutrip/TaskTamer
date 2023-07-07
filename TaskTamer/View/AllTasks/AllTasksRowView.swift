@@ -42,13 +42,17 @@ struct AllTasksRowView: View {
     var body: some View {
         
         VStack(alignment: .leading) {
-            Text(task.name)
+            HStack {
+                Text(task.name)
+                Spacer()
+            }
             if !((task.sortStatus != .previous) ^ (task.sortStatus != .unsorted)) {
                 Text(task.scheduleDescription)
                     .font(.caption)
                     .foregroundColor(scheduleColor)
             }
         }
+        .contentShape(Rectangle())
         .modifier(Unsort($vm.tasks, task, vm))
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             //TODO: make this a viewmodifier

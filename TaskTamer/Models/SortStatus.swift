@@ -38,7 +38,7 @@ enum SortStatus: Equatable, Codable {
         case .unsorted:
             return "Unsorted"
         case .previous:
-            return "Completed"
+            return "Previous"
         }
     }
 }

@@ -9,10 +9,6 @@ import Foundation
 import EventKit
 import SwiftUI
 
-enum DeleteFail: Error {
-    case noDate
-}
-
 class EventService {
     @AppStorage("firstTimeAddingEvent") var firstTimeAddingEvent = true
     
@@ -40,8 +36,10 @@ class EventService {
     }
     
     public func scheduleEvent(for task: inout TaskItem) async throws {
-        if try await eventStore.requestAccess(to: .event) {
-            
+        guard let accessGranted = try? await eventStore.requestAccess(to: .event) else {
+            throw EventServiceError.noPermission
+        }
+        if accessGranted {
             guard let startDate = task.startDate else { return }
             let event = EKEvent(eventStore: eventStore)
             event.title = task.name
@@ -51,17 +49,17 @@ class EventService {
             event.addAlarm(.init(absoluteDate: startDate))
             try eventStore.save(event, span: .thisEvent)
             task.eventID = event.eventIdentifier
-        } else { fatalError() }
+        } else { throw EventServiceError.noPermission }
     }
     
-    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem]) async -> (Date,Date)? {
+    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem]) async throws -> (Date,Date)? {
         if firstTimeAddingEvent {
             guard await requestCalendarPermission() else {
-                return nil
+                throw EventServiceError.noPermission
             }
             firstTimeAddingEvent = false
         }
-        let availableDates = fetchAvailableDates(for: timeSelection, within: tasks)
+        let availableDates = try fetchAvailableDates(for: timeSelection, within: tasks)
             .flatMap { (startTime, endTime) in
                 let distance = startTime.distance(to: endTime)
                 let numberOfAvailableSlots = Int(distance / duration) // rounds down
@@ -79,7 +77,7 @@ class EventService {
     }
     
     /// returns [(start date, end date)] for free times in given TimeSelection
-    private func fetchAvailableDates(for timeSelection: TimeSelection, within tasks: [TaskItem]) -> [(Date,Date)] {
+    private func fetchAvailableDates(for timeSelection: TimeSelection, within tasks: [TaskItem]) throws -> [(Date,Date)] {
         var startDate: Date
         var endDate: Date
         var midnight = DateComponents.midnight.date!
@@ -102,8 +100,8 @@ class EventService {
             endDate = endDate.addingTimeInterval(86400)
             midnight = midnight.addingTimeInterval(86400)
         }
-        
-        let predicate = eventStore.predicateForEvents(withStart: midnight, end: endDate, calendars: [eventStore.defaultCalendarForNewEvents!])
+        guard let calendar = eventStore.defaultCalendarForNewEvents else { throw EventServiceError.noPermission }
+        let predicate = eventStore.predicateForEvents(withStart: midnight, end: endDate, calendars: [calendar])
         let events = eventStore.events(matching: predicate)
             .filter { $0.endDate <= endDate && $0.endDate > startDate }
         var freeTime: [(Date,Date)] = (0..<events.count).map { index in

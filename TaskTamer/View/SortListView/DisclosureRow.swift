@@ -12,7 +12,7 @@ struct DisclosureRow: View {
     let task: TaskItem
     @ObservedObject var vm: ViewModel
     @Binding var taskExpanded: TaskItem?
-
+    
     let times: [Time]
     let rowTitle: String
     var body: some View {
@@ -21,12 +21,8 @@ struct DisclosureRow: View {
                 ForEach(times) { skip in
                     Button {
                         Task {
-                            do {
-                                try await vm.sortTask(task, skip.timeSelection)
-                                taskExpanded = nil
-                            } catch {
-                                vm.sortDidFail = true
-                            }
+                            await vm.sortTask(task, skip.timeSelection)
+                            taskExpanded = nil
                         }
                     } label: {
                         if times == Time.days {

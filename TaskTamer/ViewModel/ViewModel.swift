@@ -12,8 +12,12 @@ import SwiftUI
 @MainActor
 class ViewModel: ObservableObject {
     
-    @Published var showingPreviousTaskSheet = true
-    @Published var sortDidFail = false
+    @Published var showingPreviousTaskSheet = false
+    @Published var scheduleFull = false
+    @Published var noPermission = false
+    @Published var unknownError = false
+
+//    @Published var eventServiceError: EventServiceError?
     
     
     let eventService: EventService
@@ -36,6 +40,9 @@ class ViewModel: ObservableObject {
     
     public func refreshTasks() {
         let tasks = eventService.updateTaskTimes(for: tasks)
+//        if tasks.contains(where: { $0.sortStatus == .previous }) {
+//            self.showingPreviousTaskSheet = true
+//        }
         self.tasks = refreshSortStatus(for: tasks)
     }
     
@@ -46,7 +53,6 @@ class ViewModel: ObservableObject {
             print(TaskItem.morningStartTime.adjustedToCurrentDay,TaskItem.morningEndTime.adjustedToCurrentDay)
 //                        print(TaskItem.afternoonStartTime,TaskItem.afternoonEndTime)
 //                        print(TaskItem.eveningStartTime,TaskItem.eveningEndTime)
-            
             if endDate < Date() {
                 task.sortStatus = .previous
                 return task
@@ -63,17 +69,29 @@ class ViewModel: ObservableObject {
         }
     }
     
-    public func sortTask(_ task: TaskItem, _ time: TimeSelection) async throws {
-        var task = task
-        let duration: TimeInterval = 900 // 15 mins
-        try await task.sort(duration: duration, at: time, within: tasks)
-        var tasks = self.tasks
-        tasks = tasks.filter {
-            $0.id != task.id
+    public func sortTask(_ task: TaskItem, _ time: TimeSelection) async {
+        do {
+            var task = task
+            let duration: TimeInterval = 900 // 15 mins
+            try await task.sort(duration: duration, at: time, within: tasks)
+            var tasks = self.tasks
+            tasks = tasks.filter {
+                $0.id != task.id
+            }
+            tasks.append(task)
+            self.tasks = tasks
+            DirectoryService.writeModelToDisk(tasks)
+        } catch {
+            let eventServiceError = error as? EventServiceError
+            switch eventServiceError {
+            case .noPermission:
+                noPermission = true
+            case .scheduleFull:
+                scheduleFull = true
+            case .none:
+                unknownError = true
+            }
         }
-        tasks.append(task)
-        self.tasks = tasks
-        DirectoryService.writeModelToDisk(tasks)
     }
     
     public func unscheduleTask(_ task: TaskItem) {
