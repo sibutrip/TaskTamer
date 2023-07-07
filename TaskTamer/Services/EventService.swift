@@ -52,14 +52,14 @@ class EventService {
         } else { throw EventServiceError.noPermission }
     }
     
-    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem]) async throws -> (Date,Date)? {
+    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem], vm: ViewModel) async throws -> (Date,Date)? {
         if firstTimeAddingEvent {
             guard await requestCalendarPermission() else {
                 throw EventServiceError.noPermission
             }
             firstTimeAddingEvent = false
         }
-        let availableDates = try fetchAvailableDates(for: timeSelection, within: tasks)
+        let availableDates = try await fetchAvailableDates(for: timeSelection, within: tasks, vm: vm)
             .flatMap { (startTime, endTime) in
                 let distance = startTime.distance(to: endTime)
                 let numberOfAvailableSlots = Int(distance / duration) // rounds down
@@ -77,20 +77,20 @@ class EventService {
     }
     
     /// returns [(start date, end date)] for free times in given TimeSelection
-    private func fetchAvailableDates(for timeSelection: TimeSelection, within tasks: [TaskItem]) throws -> [(Date,Date)] {
+    @MainActor private func fetchAvailableDates(for timeSelection: TimeSelection, within tasks: [TaskItem], vm: ViewModel) throws -> [(Date,Date)] {
         var startDate: Date
         var endDate: Date
         var midnight = DateComponents.midnight.date!
         switch timeSelection {
         case .morning:
-            startDate = TimeBlocks.shared.morningStartTime
-            endDate = TimeBlocks.shared.morningEndTime
+            startDate = vm.morningStartTime
+            endDate = vm.morningEndTime
         case .afternoon:
-            startDate = TimeBlocks.shared.afternoonStartTime
-            endDate = TimeBlocks.shared.afternoonEndtime
+            startDate = vm.afternoonStartTime
+            endDate = vm.afternoonEndtime
         case .evening:
-            startDate = TimeBlocks.shared.eveningStartTime
-            endDate = TimeBlocks.shared.eveningEndTime
+            startDate = vm.eveningStartTime
+            endDate = vm.eveningEndTime
         default:
             return []
         }

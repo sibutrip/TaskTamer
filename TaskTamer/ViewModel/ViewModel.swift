@@ -18,6 +18,13 @@ class ViewModel: ObservableObject {
     @Published var scheduleFull = false
     @Published var noPermission = false
     @Published var unknownError = false
+    
+    @TimeBlock("morningStart", hour: 8, minute: 0) var morningStartTime
+    @TimeBlock("morningEnd", hour: 12, minute: 0) var morningEndTime
+    @TimeBlock("afternoonStart", hour: 13, minute: 0) var afternoonStartTime
+    @TimeBlock("afternoonEnd", hour: 17, minute: 0) var afternoonEndtime
+    @TimeBlock("eveningStart", hour: 17, minute: 0) var eveningStartTime
+    @TimeBlock("eveningEnd", hour: 21, minute: 0) var eveningEndTime
 
 //    @Published var eventServiceError: EventServiceError?
     
@@ -49,12 +56,12 @@ class ViewModel: ObservableObject {
     }
     
     private func refreshSortStatus(for tasks: [TaskItem]) -> [TaskItem] {
-        let morningStart = TimeBlocks.shared.morningStartTime.adjustedToCurrentDay
-        let morningEnd = TimeBlocks.shared.morningEndTime.adjustedToCurrentDay
-        let afternoonStart = TimeBlocks.shared.afternoonStartTime.adjustedToCurrentDay
-        let afternoonEnd = TimeBlocks.shared.afternoonEndtime.adjustedToCurrentDay
-        let eveningStart = TimeBlocks.shared.eveningStartTime.adjustedToCurrentDay
-        let eveningEnd = TimeBlocks.shared.eveningEndTime.adjustedToCurrentDay
+        let morningStart = morningStartTime.adjustedToCurrentDay
+        let morningEnd = morningEndTime.adjustedToCurrentDay
+        let afternoonStart = afternoonStartTime.adjustedToCurrentDay
+        let afternoonEnd = afternoonEndtime.adjustedToCurrentDay
+        let eveningStart = eveningStartTime.adjustedToCurrentDay
+        let eveningEnd = eveningEndTime.adjustedToCurrentDay
         
         return tasks.map { task in
             var task = task
@@ -84,7 +91,7 @@ class ViewModel: ObservableObject {
         do {
             var task = task
             let duration: TimeInterval = 900 // 15 mins
-            try await task.sort(duration: duration, at: time, within: tasks)
+            try await task.sort(duration: duration, at: time, within: tasks, vm: self)
             var tasks = self.tasks
             tasks = tasks.filter {
                 $0.id != task.id

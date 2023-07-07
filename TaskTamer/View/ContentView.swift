@@ -26,7 +26,7 @@ struct ContentView: View {
             PreviousTaskSheet(vm)
         }
         .sheet(isPresented: $vm.showingSettingsSheet) {
-            SettingsSheet()
+            SettingsSheet(vm)
         }
     }
 }

@@ -64,11 +64,11 @@ struct TaskItem: Identifiable, Equatable, Codable {
         }
     }
     
-    mutating func sort(duration: TimeInterval, at time: TimeSelection, within tasks: [TaskItem]) async throws {
+    mutating func sort(duration: TimeInterval, at time: TimeSelection, within tasks: [TaskItem], vm: ViewModel) async throws {
         switch time {
         case .morning, .afternoon, .evening:
             let eventService = EventService.shared
-            let scheduledDate = try await eventService.selectDate(duration: duration, from: time, within: tasks)
+            let scheduledDate = try await eventService.selectDate(duration: duration, from: time, within: tasks, vm: vm)
             guard let scheduledDate = scheduledDate else {
                 throw EventServiceError.scheduleFull
             }

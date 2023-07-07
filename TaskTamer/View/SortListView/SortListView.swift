@@ -59,7 +59,7 @@ struct SortListView: View {
                             .padding(.horizontal)
                         }
                         .padding(.bottom, scaledPadding)
-                        .background { Color.primary.colorInvert() }
+                        .background { Color("ListForeground") }
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
