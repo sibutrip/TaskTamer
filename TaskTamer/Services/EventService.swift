@@ -83,14 +83,14 @@ class EventService {
         var midnight = DateComponents.midnight.date!
         switch timeSelection {
         case .morning:
-            startDate = DateComponents.hour(from: 8).date!
-            endDate = DateComponents.hour(from: 12).date!
+            startDate = TimeBlocks.shared.morningStartTime
+            endDate = TimeBlocks.shared.morningEndTime
         case .afternoon:
-            startDate = DateComponents.hour(from: 13).date!
-            endDate = DateComponents.hour(from: 17).date!
+            startDate = TimeBlocks.shared.afternoonStartTime
+            endDate = TimeBlocks.shared.afternoonEndtime
         case .evening:
-            startDate = DateComponents.hour(from: 17).date!
-            endDate = DateComponents.hour(from: 21).date!
+            startDate = TimeBlocks.shared.eveningStartTime
+            endDate = TimeBlocks.shared.eveningEndTime
         default:
             return []
         }

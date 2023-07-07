@@ -42,13 +42,6 @@ struct TaskItem: Identifiable, Equatable, Codable {
         }
     }
     
-    //    static var morningStartTime = Date.hourAddingDayIfNeeded(from: 8)
-    //    static var morningEndTime = Date.hourAddingDayIfNeeded(from: 12)
-    //    static var afternoonStartTime = Date.hourAddingDayIfNeeded(from: 13)
-    //    static var afternoonEndTime = Date.hourAddingDayIfNeeded(from: 17)
-    //    static var eveningStartTime = Date.hourAddingDayIfNeeded(from: 17)
-    //    static var eveningEndTime = Date.hourAddingDayIfNeeded(from: 21)
-    
     init(name: String) {
         id = UUID()
         eventID = ""

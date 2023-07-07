@@ -21,7 +21,7 @@ struct SettingsSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Your preferred Time Blocks") {
+                Section("Preferred Time Blocks") {
                     HStack {
                         DatePicker("Start", selection: $morningStart, displayedComponents: .hourAndMinute)
                         DatePicker("End", selection: $morningEnd, displayedComponents: .hourAndMinute)
