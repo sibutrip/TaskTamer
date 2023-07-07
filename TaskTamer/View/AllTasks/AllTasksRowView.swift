@@ -34,6 +34,8 @@ struct AllTasksRowView: View {
             }
         case .unsorted:
             return Color.primary
+        case .previous:
+            return Color.red
         }
     }
     

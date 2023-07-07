@@ -15,7 +15,6 @@ struct ContentView: View {
                 .tabItem {
                     Label("Sort", systemImage: "calendar")
                 }
-                .navigationTitle("Sort Tasks")
             AllTasksView(vm: vm)
                 .tabItem {
                     Label("All", systemImage: "tray.full")
@@ -23,6 +22,9 @@ struct ContentView: View {
         }
         .transition(.slide)
         .animation(.default, value: vm.tasks)
+        .sheet(isPresented: $vm.showingPreviousTaskSheet) {
+            PreviousTaskSheet(vm)
+        }
     }
 }
 

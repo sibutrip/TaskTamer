@@ -120,13 +120,11 @@ class EventService {
         if freeTime.isEmpty { freeTime.append((startDate,endDate)) }
         freeTime = freeTime.map { (startDate,endDate) in
             if startDate < Date.nearestQuarterHour {
-                print(Date.nearestQuarterHour)
                 return (Date.nearestQuarterHour,endDate)
             }
             return (startDate,endDate)
         }
         .filter { $0.0 != $0.1 }
-        print(freeTime)
         return freeTime
     }
     

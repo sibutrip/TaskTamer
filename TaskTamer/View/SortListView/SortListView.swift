@@ -68,12 +68,17 @@ struct SortListView: View {
             }
             .navigationTitle("Sort Tasks")
             .overlay {
-                if vm.tasks.isEmpty {
-                    Text("You have no tasks!")
+                if vm.unsortedTasks.isEmpty {
+                    Text("You have no unsorted tasks!")
                 }
             }
             .alert("Your schedule at that time full. Try scheduling this event at a different time.", isPresented: $vm.sortDidFail) {
                 Button("ok") { vm.sortDidFail = false }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    CompleteTaskToolbar(vm)
+                }
             }
         }
     }

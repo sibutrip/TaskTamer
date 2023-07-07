@@ -10,6 +10,7 @@ import Foundation
 enum SortStatus: Equatable, Codable {
     case sorted(TimeSelection)
     case skipped(TimeSelection)
+    case previous
     case unsorted
     
     var sortName: String {
@@ -36,6 +37,8 @@ enum SortStatus: Equatable, Codable {
             }
         case .unsorted:
             return "Unsorted"
+        case .previous:
+            return "Completed"
         }
     }
 }

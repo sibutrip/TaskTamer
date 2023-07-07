@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		744C3ACE2A4F7EEB00CE124E /* DateComponents+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */; };
+		744C3AEA2A575C4C00CE124E /* CompleteTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */; };
+		744C3AEC2A57900900CE124E /* CompleteTaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AEB2A57900900CE124E /* CompleteTaskRow.swift */; };
+		744C3AEF2A57984E00CE124E /* CompleteTaskToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */; };
 		745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745376B82A4B1FF2000382A0 /* SortSwipeView.swift */; };
 		74EFBDB92A49C191002C8388 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD8F2A49C191002C8388 /* ViewModel.swift */; };
 		74EFBDBA2A49C191002C8388 /* ADHDBrainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */; };
@@ -43,6 +46,9 @@
 
 /* Begin PBXFileReference section */
 		744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extension.swift"; sourceTree = "<group>"; };
+		744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskSheet.swift; sourceTree = "<group>"; };
+		744C3AEB2A57900900CE124E /* CompleteTaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskRow.swift; sourceTree = "<group>"; };
+		744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskToolbar.swift; sourceTree = "<group>"; };
 		745376B82A4B1FF2000382A0 /* SortSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortSwipeView.swift; sourceTree = "<group>"; };
 		748DAE3C29FD930D003A3B06 /* TaskTamer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskTamer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74EFBD8F2A49C191002C8388 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
@@ -88,6 +94,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		744C3AED2A57900D00CE124E /* CompleteTaskSheet */ = {
+			isa = PBXGroup;
+			children = (
+				744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */,
+				744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */,
+				744C3AEB2A57900900CE124E /* CompleteTaskRow.swift */,
+			);
+			path = CompleteTaskSheet;
+			sourceTree = "<group>";
+		};
 		748DAE3329FD930D003A3B06 = {
 			isa = PBXGroup;
 			children = (
@@ -122,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				74EFBD8F2A49C191002C8388 /* ViewModel.swift */,
+				74EFBDB12A49C191002C8388 /* PropertyWrapper */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -153,7 +170,7 @@
 				74EFBD9E2A49C191002C8388 /* SortDragView */,
 				74EFBD9A2A49C191002C8388 /* SortListView */,
 				74EFBDD82A49C2D6002C8388 /* AllTasks */,
-				74EFBDB12A49C191002C8388 /* PropertyWrapper */,
+				744C3AED2A57900D00CE124E /* CompleteTaskSheet */,
 				74EFBDAE2A49C191002C8388 /* Color+Extension.swift */,
 			);
 			path = View;
@@ -319,6 +336,7 @@
 				74EFBDD62A49C191002C8388 /* DirectoryService.swift in Sources */,
 				74EFBDD12A49C191002C8388 /* AllTasksView.swift in Sources */,
 				74EFBDBC2A49C191002C8388 /* TimeSelection.swift in Sources */,
+				744C3AEF2A57984E00CE124E /* CompleteTaskToolbar.swift in Sources */,
 				74EFBDCA2A49C191002C8388 /* DropPreference.swift in Sources */,
 				74EFBDC92A49C191002C8388 /* DismissKeyboardPreference.swift in Sources */,
 				74EFBDC12A49C191002C8388 /* SortListView.swift in Sources */,
@@ -329,7 +347,9 @@
 				74EFBDC82A49C191002C8388 /* DragPreference.swift in Sources */,
 				74EFBDD22A49C191002C8388 /* Saving.swift in Sources */,
 				74EFBDBE2A49C191002C8388 /* SortStatus.swift in Sources */,
+				744C3AEC2A57900900CE124E /* CompleteTaskRow.swift in Sources */,
 				74EFBDCE2A49C191002C8388 /* Unsort.swift in Sources */,
+				744C3AEA2A575C4C00CE124E /* CompleteTaskSheet.swift in Sources */,
 				74EFBDC32A49C191002C8388 /* TaskRow.swift in Sources */,
 				74EFBDCD2A49C191002C8388 /* SwipeGesture.swift in Sources */,
 				745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */,

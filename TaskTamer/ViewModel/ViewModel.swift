@@ -11,7 +11,11 @@ import SwiftUI
 
 @MainActor
 class ViewModel: ObservableObject {
-        
+    
+    @Published var showingPreviousTaskSheet = true
+    @Published var sortDidFail = false
+    
+    
     let eventService: EventService
     @Saving var tasks: [TaskItem] {
         didSet {
@@ -24,7 +28,11 @@ class ViewModel: ObservableObject {
             .sorted { $0.name < $1.name }
     }
     
-    @Published var sortDidFail = false
+    var previousTasks: [TaskItem] {
+        tasks
+            .filter { return $0.sortStatus == .previous }
+            .sorted { $0.name < $1.name }
+    }
     
     public func refreshTasks() {
         let tasks = eventService.updateTaskTimes(for: tasks)
@@ -35,12 +43,14 @@ class ViewModel: ObservableObject {
         return tasks.map { task in
             var task = task
             guard let startDate = task.startDate, let _ = task.endDate else { return task }
-            print(TaskItem.morningStartTime,TaskItem.morningEndTime)
-            print(TaskItem.afternoonStartTime,TaskItem.afternoonEndTime)
-            print(TaskItem.eveningStartTime,TaskItem.eveningEndTime)
-
-
-            if startDate >= TaskItem.morningStartTime && startDate < TaskItem.morningEndTime {
+            //            print(TaskItem.morningStartTime,TaskItem.morningEndTime)
+            //            print(TaskItem.afternoonStartTime,TaskItem.afternoonEndTime)
+            //            print(TaskItem.eveningStartTime,TaskItem.eveningEndTime)
+            
+            if task.sortStatus == .previous || task.endDate ?? Date.distantFuture < Date() {
+                task.sortStatus = .previous
+                return task
+            } else if startDate >= TaskItem.morningStartTime && startDate < TaskItem.morningEndTime {
                 task.sortStatus = .sorted(.morning)
             } else if startDate >= TaskItem.afternoonStartTime && startDate < TaskItem.afternoonEndTime {
                 task.sortStatus = .sorted(.afternoon)
@@ -107,13 +117,19 @@ class ViewModel: ObservableObject {
     
     public func openCalendar(for task: TaskItem) async {
         guard let date = task.startDate, let url = URL(string: "calshow:\(date.timeIntervalSinceReferenceDate)") else {
-              return
-            }
+            return
+        }
         await UIApplication.shared.open(url)
     }
     
     init() {
         eventService = EventService.shared
         initTasks()
+        refreshTasks()
+        tasks.forEach { task in
+            if task.sortStatus == .previous {
+                print(task.name)
+            }
+        }
     }
 }

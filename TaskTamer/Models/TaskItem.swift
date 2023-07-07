@@ -30,6 +30,8 @@ struct TaskItem: Identifiable, Equatable, Codable {
             return "skipped until \(startDate?.formatted(date:.abbreviated, time: .omitted) ?? "")"
         case .unsorted:
             return "unsorted"
+        case .previous:
+            return "previous"
         }
     }
     
@@ -62,7 +64,7 @@ struct TaskItem: Identifiable, Equatable, Codable {
         self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
         if let endDate = endDate {
             if Date() > endDate {
-                self.sortStatus = .unsorted
+                self.sortStatus = .previous
             } else {
                 self.sortStatus = try container.decode(SortStatus.self, forKey: .sortStatus)
             }

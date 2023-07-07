@@ -68,6 +68,8 @@ struct AllTasksView: View {
             return .green
         case .unsorted:
             return .primary
+        case .previous:
+            return .red
         }
     }
     
@@ -95,6 +97,15 @@ struct AllTasksView: View {
             .navigationTitle("All Tasks")
             .onChange(of: scenePhase) { newValue in
                 if newValue == .active { vm.refreshTasks() }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        vm.showingPreviousTaskSheet = true
+                    } label: {
+                        CompleteTaskToolbar(vm)
+                    }
+                }
             }
         }
     }
