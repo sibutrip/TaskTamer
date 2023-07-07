@@ -29,12 +29,14 @@ struct DisclosureRow: View {
                             Label(skip.name, systemImage: skip.image)
                                 .foregroundColor(skip.color)
                                 .labelStyle(.iconOnly)
-                                .padding(5)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 3)
                         } else {
                             Label(skip.name, image: skip.image)
                                 .foregroundColor(skip.color)
                                 .labelStyle(.iconOnly)
-                                .padding(5)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 3)
                         }
                     }
                     .buttonStyle(.plain)

@@ -21,7 +21,7 @@ struct SortListDisclosure: View {
     @Binding var taskDeleting: TaskItem?
     @State var deleteModeEnabled = false
     @State var fullSwipeDelete = false
-    @State var sliderValue: Double = 15
+    @State var sliderValue: Int = 15
     
     @State var xOffset: Double = 0
     @State var yFrame: Double = 1
@@ -145,10 +145,11 @@ struct SortListDisclosure: View {
                         Spacer()
                         DisclosureRow(for: Time.days, vm, task, $taskExpanded)
                     }
-                    Stepper("\(sliderValue) mins", value: $sliderValue, in: 15...60, step: 15)
+                    TimeLengthStepper(sliderValue: $sliderValue, geo: geo)
+                        .padding(.vertical,scaledPadding)
                     Divider()
                 }
-                .padding(.horizontal, 30)
+                .padding(.horizontal, scaledPadding * 3)
                 .padding(.top, scaledPadding)
                 .scaleEffect(taskExpanded == task ? 1 : 0.1)
                 .animation(.default, value: taskExpanded)
