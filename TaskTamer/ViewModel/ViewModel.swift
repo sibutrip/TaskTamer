@@ -13,6 +13,8 @@ import SwiftUI
 class ViewModel: ObservableObject {
     
     @Published var showingPreviousTaskSheet = false
+    @Published var showingSettingsSheet = false
+
     @Published var scheduleFull = false
     @Published var noPermission = false
     @Published var unknownError = false

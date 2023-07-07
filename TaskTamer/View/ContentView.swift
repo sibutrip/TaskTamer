@@ -25,6 +25,9 @@ struct ContentView: View {
         .sheet(isPresented: $vm.showingPreviousTaskSheet) {
             PreviousTaskSheet(vm)
         }
+        .sheet(isPresented: $vm.showingSettingsSheet) {
+            SettingsSheet()
+        }
     }
 }
 

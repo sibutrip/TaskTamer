@@ -98,11 +98,10 @@ struct AllTasksView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        vm.showingPreviousTaskSheet = true
-                    } label: {
-                        CompleteTaskToolbar(vm)
-                    }
+                    CompleteTaskToolbar(vm)
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    SettingsToolbar(vm)
                 }
             }
         }

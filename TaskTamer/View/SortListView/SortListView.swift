@@ -97,6 +97,9 @@ struct SortListView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     CompleteTaskToolbar(vm)
                 }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    SettingsToolbar(vm)
+                }
             }
         }
     }

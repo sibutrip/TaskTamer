@@ -11,8 +11,8 @@ import SwiftUI
 struct TaskTamerApp: App {
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-            SettingsView()
+            ContentView()
+//            SettingsView()
         }
     }
 }
