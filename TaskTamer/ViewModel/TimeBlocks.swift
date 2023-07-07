@@ -8,6 +8,25 @@
 import Foundation
 import SwiftUI
 
+class TimeBlocks {
+    static let shared = TimeBlocks()
+    @TimeBlock("morningStart", hour: 8, minute: 0) var morningStartTime
+    @TimeBlock("morningEnd", hour: 12, minute: 0) var morningEndTime
+    @TimeBlock("afternoonStart", hour: 13, minute: 0) var afternoonStartTime
+    @TimeBlock("afternoonEnd", hour: 17, minute: 0) var afternoonEndtime
+    @TimeBlock("eveningStart", hour: 17, minute: 0) var eveningStartTime
+    @TimeBlock("eveningEnd", hour: 21, minute: 0) var eveningEndTime
+    
+    public func reset() {
+        morningStartTime = DateComponents.hourAndMinute(from: 8, and: 0).date!
+        morningEndTime = DateComponents.hourAndMinute(from: 12, and: 0).date!
+        afternoonStartTime = DateComponents.hourAndMinute(from: 13, and: 0).date!
+        afternoonEndtime = DateComponents.hourAndMinute(from: 17, and: 0).date!
+        eveningStartTime = DateComponents.hourAndMinute(from: 17, and: 0).date!
+        eveningEndTime = DateComponents.hourAndMinute(from: 21, and: 0).date!
+    }
+}
+
 @propertyWrapper
 struct TimeBlock: DynamicProperty {
     let key: String
@@ -34,14 +53,4 @@ struct TimeBlock: DynamicProperty {
             self.projectedValue = hour * 60 + minute
         }
     }
-}
-
-class TimeBlocks {
-    static let shared = TimeBlocks()
-    @TimeBlock("morningStart", hour: 8, minute: 0) var morningStartTime
-    @TimeBlock("morningEnd", hour: 12, minute: 0) var morningEndTime
-    @TimeBlock("afternoonStart", hour: 13, minute: 0) var afternoonStartTime
-    @TimeBlock("afternoonEnd", hour: 17, minute: 0) var afternoonEndtime
-    @TimeBlock("eveningStart", hour: 17, minute: 0) var eveningStartTime
-    @TimeBlock("eveningEnd", hour: 21, minute: 0) var eveningEndTime
 }

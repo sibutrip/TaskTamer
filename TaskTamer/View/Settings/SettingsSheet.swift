@@ -21,22 +21,34 @@ struct SettingsSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Preferred Time Blocks") {
-                    HStack {
-                        DatePicker("Start", selection: $morningStart, displayedComponents: .hourAndMinute)
-                        DatePicker("End", selection: $morningEnd, displayedComponents: .hourAndMinute)
+                Section("Morning") {
+                    DatePicker("Start", selection: $morningStart, displayedComponents: .hourAndMinute)
+                    DatePicker("End", selection: $morningEnd, displayedComponents: .hourAndMinute)
+                }
+                Section("Afternoon") {
+                    DatePicker("Start", selection: $afternoonStart, displayedComponents: .hourAndMinute)
+                    DatePicker("End", selection: $afternoonEnd, displayedComponents: .hourAndMinute)
+                }
+                Section("Evening") {
+                    DatePicker("Start", selection: $eveningStart, displayedComponents: .hourAndMinute)
+                    DatePicker("End", selection: $eveningEnd, displayedComponents: .hourAndMinute)
+                }
+                .onAppear {
+                    UIDatePicker.appearance().minuteInterval = 15
+                }
+                HStack {
+                    Button {
+                        reset()
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Reset")
+                                .foregroundColor(.red)
+                            Spacer()
+                        }
                     }
-                    HStack {
-                        DatePicker("Start", selection: $afternoonStart, displayedComponents: .hourAndMinute)
-                        DatePicker("End", selection: $afternoonEnd, displayedComponents: .hourAndMinute)
-                    }
-                    HStack {
-                        DatePicker("Start", selection: $eveningStart, displayedComponents: .hourAndMinute)
-                        DatePicker("End", selection: $eveningEnd, displayedComponents: .hourAndMinute)
-                    }
-                    .onAppear {
-                        UIDatePicker.appearance().minuteInterval = 15
-                    }
+                    .buttonStyle(.bordered)
+                    Spacer()
                     Button {
                         save()
                     } label: {
@@ -45,12 +57,11 @@ struct SettingsSheet: View {
                             Text("Save")
                             Spacer()
                         }
-                        .contentShape(Rectangle())
                     }
-                    
+                    .buttonStyle(.bordered)
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle("Preferred Time Blocks")
             .alert("Time Blocks must not overlap.", isPresented: $invalidTimes) {
                 Button("Ok") { invalidTimes = false }
             }
@@ -68,6 +79,15 @@ struct SettingsSheet: View {
             TimeBlocks.shared.eveningEndTime = eveningEnd
             dismiss()
         }
+    }
+    func reset() {
+        TimeBlocks.shared.reset()
+        morningStart = TimeBlocks.shared.morningStartTime
+        morningEnd = TimeBlocks.shared.morningEndTime
+        afternoonStart = TimeBlocks.shared.afternoonStartTime
+        afternoonEnd = TimeBlocks.shared.afternoonEndtime
+        eveningStart = TimeBlocks.shared.eveningStartTime
+        eveningEnd = TimeBlocks.shared.eveningEndTime
     }
 }
 
