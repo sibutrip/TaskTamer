@@ -19,7 +19,7 @@ struct AllTasksRowView: View {
         case .sorted(let status):
             switch status {
                 
-            case .morning, .afternoon, .evening:
+            case .morning, .afternoon, .evening, .other:
                 return Color.green
             default:
                 return Color.black
@@ -34,17 +34,25 @@ struct AllTasksRowView: View {
             }
         case .unsorted:
             return Color.primary
+        case .previous:
+            return Color.red
         }
     }
     
     var body: some View {
         
         VStack(alignment: .leading) {
-            Text(task.name)
-            Text(task.scheduleDescription)
-                .font(.caption)
-                .foregroundColor(scheduleColor)
+            HStack {
+                Text(task.name)
+                Spacer()
+            }
+            if !((task.sortStatus != .previous) ^ (task.sortStatus != .unsorted)) {
+                Text(task.scheduleDescription)
+                    .font(.caption)
+                    .foregroundColor(scheduleColor)
+            }
         }
+        .contentShape(Rectangle())
         .modifier(Unsort($vm.tasks, task, vm))
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             //TODO: make this a viewmodifier

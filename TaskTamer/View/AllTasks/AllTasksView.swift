@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AllTasksView: View {
     @ObservedObject var vm: ViewModel
+    @Environment(\.scenePhase) var scenePhase
     
     var sortedTaskTimes: [Dictionary<String, [TaskItem]>.Element] {
         var taskTimes: [String:[TaskItem]] = [:]
@@ -19,7 +20,7 @@ struct AllTasksView: View {
                     if first.sortStatus == .unsorted {
                         return first.name < second.name
                     } else {
-                        if let firstDate = first.scheduledDate, let secondDate = second.scheduledDate {
+                        if let firstDate = first.startDate, let secondDate = second.startDate {
                             return firstDate < secondDate
                         }
                     }
@@ -42,6 +43,10 @@ struct AllTasksView: View {
                 return true
             } else if second.key == "Evening" {
                 return false
+            } else if first.key == "Other" {
+                return true
+            } else if second.key == "Other" {
+                return false
             } else if first.key == "Skipped" {
                 return true
             } else if second.key == "Skipped" {
@@ -63,6 +68,8 @@ struct AllTasksView: View {
             return .green
         case .unsorted:
             return .primary
+        case .previous:
+            return .red
         }
     }
     
@@ -76,6 +83,9 @@ struct AllTasksView: View {
                         Section(sortedTaskTimes[index].key) {
                             ForEach(sortedTaskTimes[index].value) { task in
                                 AllTasksRowView(task, vm)
+                                    .onTapGesture {
+                                        Task { await vm.openCalendar(for: task) }
+                                    }
                             }
                         }
                         .transition(.slide)
@@ -83,6 +93,18 @@ struct AllTasksView: View {
                 }
             }
             .navigationTitle("All Tasks")
+            .onChange(of: scenePhase) { newValue in
+                if newValue == .active { vm.refreshTasks() }
+            }
+            .onAppear { vm.refreshTasks() }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    CompleteTaskToolbar(vm)
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    SettingsToolbar(vm)
+                }
+            }
         }
     }
 }

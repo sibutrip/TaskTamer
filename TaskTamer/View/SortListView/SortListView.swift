@@ -9,8 +9,9 @@ import SwiftUI
 
 struct SortListView: View {
     
+    @ScaledMetric(relativeTo: .body) var scaledPadding: CGFloat = 10
+    
     @StateObject var dragManager = DragManager()
-    @Environment(\.editMode) var editMode
     
     enum FocusedField {
         case showKeyboard, dismissKeyboard
@@ -22,48 +23,83 @@ struct SortListView: View {
     @State private var dragAction: DragTask = .init(isDragging: false, timeSelection: .noneSelected, keyboardSelection: .dismissKeyboard)
     @State private var sortDidFail: Bool = false
     @State private var taskExpanded: TaskItem?
+    @State private var taskDeleting: TaskItem?
     @State private var disclosure: Bool = false
     
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(0..<vm.unsortedTasks.count, id: \.self) { index in
-                    let task = vm.unsortedTasks[index]
-                    SortListDisclosure(vm, task, $taskExpanded)
-                }
-                .onDelete { indexSet in
-                    guard let index = indexSet.first else { return }
-                    let task = vm.unsortedTasks[index]
-                    vm.tasks.removeAll { $0.id == task.id  }
-                }
-                HStack {
-                    TextField("New task...", text: $newTask)
-//                        .focused($isFocused)
-                        .onSubmit {
-                            addTask()
+            ZStack {
+                Color("ListBackground")
+                    .ignoresSafeArea()
+                GeometryReader { geo in
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(0..<vm.unsortedTasks.count, id: \.self) { index in
+                                SortListDisclosure(vm, index, $taskExpanded, geo, $taskDeleting)
+                                    .background { Color("ListForeground") }
+                            }
+                            HStack {
+                                TextField(text: $newTask, prompt: Text("Add a Task")) {
+                                    Text(newTask)
+                                }
+                                .onSubmit {
+                                    //                                    (0...10).forEach { _ in
+                                    addTask()
+                                    //                                    }
+                                }
+                                Button {
+                                    addTask()
+                                } label: {
+                                    Image(systemName: "plus.circle")
+                                        .foregroundColor(.accentColor)
+                                }
+                            }
+                            .padding(.top,scaledPadding)
+                            .padding(.horizontal)
                         }
-                    Button {
-                        addTask()
-                    } label: {
-                        Image(systemName: "plus.circle")
-                            .foregroundColor(.accentColor)
+                        .padding(.bottom, scaledPadding)
+                        .background { Color("ListForeground") }
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton()
-                }
+                .padding(.horizontal)
+                Spacer()
             }
             .navigationTitle("Sort Tasks")
             .overlay {
-                if vm.tasks.isEmpty {
-                    Text("You have no tasks!")
+                if vm.unsortedTasks.isEmpty {
+                    Text("You have no unsorted tasks!")
                 }
             }
-            .alert("Your schedule at that time full. Try scheduling this event at a different time.", isPresented: $vm.sortDidFail) {
-                Button("ok") { vm.sortDidFail = false }
+            .alert("Your schedule at that time full. Try scheduling this event at a different time.", isPresented: $vm.scheduleFull) {
+                Button("ok") { vm.scheduleFull = false }
+            }
+            .alert("Enable Calendar permissions in your Settings to schedule an event.", isPresented: $vm.noPermission) {
+                HStack {
+                    Button("No thanks") { vm.noPermission = false }
+                    Button("Take me there") {
+//                        vm.noPermission = false
+                        Task {
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                // Ask the system to open that URL.
+                                await UIApplication.shared.open(url)
+                            }
+                        }
+                    }
+                    .keyboardShortcut(.defaultAction)
+                }
+            }
+            .alert("An unknown error occured. Please submit a bug report ;)", isPresented: $vm.unknownError) {
+                Button("Ok") { vm.unknownError = false }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    CompleteTaskToolbar(vm)
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    SettingsToolbar(vm)
+                }
             }
         }
     }

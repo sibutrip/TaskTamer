@@ -7,9 +7,27 @@
 
 import Foundation
 import EventKit
+import SwiftUI
 
 @MainActor
 class ViewModel: ObservableObject {
+    
+    @Published var showingPreviousTaskSheet = false
+    @Published var showingSettingsSheet = false
+
+    @Published var scheduleFull = false
+    @Published var noPermission = false
+    @Published var unknownError = false
+    
+    @TimeBlock("morningStart", hour: 8, minute: 0) var morningStartTime
+    @TimeBlock("morningEnd", hour: 12, minute: 0) var morningEndTime
+    @TimeBlock("afternoonStart", hour: 13, minute: 0) var afternoonStartTime
+    @TimeBlock("afternoonEnd", hour: 17, minute: 0) var afternoonEndtime
+    @TimeBlock("eveningStart", hour: 17, minute: 0) var eveningStartTime
+    @TimeBlock("eveningEnd", hour: 21, minute: 0) var eveningEndTime
+
+//    @Published var eventServiceError: EventServiceError?
+    
     
     let eventService: EventService
     @Saving var tasks: [TaskItem] {
@@ -23,32 +41,86 @@ class ViewModel: ObservableObject {
             .sorted { $0.name < $1.name }
     }
     
-    @Published var sortDidFail = false
+    var previousTasks: [TaskItem] {
+        tasks
+            .filter { return $0.sortStatus == .previous }
+            .sorted { $0.name < $1.name }
+    }
     
-    public func sortTask(_ task: TaskItem, _ time: TimeSelection) async throws {
-        var task = task
-        try await task.sort(at: time)
-        var tasks = self.tasks
-        tasks = tasks.filter {
-            $0.id != task.id
+    public func refreshTasks() {
+        let tasks = eventService.updateTaskTimes(for: tasks)
+        self.tasks = refreshSortStatus(for: tasks)
+    }
+    
+    private func refreshSortStatus(for tasks: [TaskItem]) -> [TaskItem] {
+        let morningStart = morningStartTime.adjustedToCurrentDay
+        let morningEnd = morningEndTime.adjustedToCurrentDay
+        let afternoonStart = afternoonStartTime.adjustedToCurrentDay
+        let afternoonEnd = afternoonEndtime.adjustedToCurrentDay
+        let eveningStart = eveningStartTime.adjustedToCurrentDay
+        let eveningEnd = eveningEndTime.adjustedToCurrentDay
+        
+        return tasks.map { task in
+            var task = task
+            guard let startDate = task.startDate, let endDate = task.endDate else { return task }
+//            print(TaskItem.morningStartTime.adjustedToCurrentDay,TaskItem.morningEndTime.adjustedToCurrentDay)
+//                        print(TaskItem.afternoonStartTime,TaskItem.afternoonEndTime)
+//                        print(TaskItem.eveningStartTime,TaskItem.eveningEndTime)
+            if endDate < Date() {
+                task.sortStatus = .previous
+                return task
+            } else if task.sortStatus.case == .skipped {
+                return task
+            } else if startDate.adjustedToCurrentDay >= morningStart && startDate.adjustedToCurrentDay < morningEnd {
+                task.sortStatus = .sorted(.morning)
+            } else if startDate.adjustedToCurrentDay >= afternoonStart && startDate.adjustedToCurrentDay < afternoonEnd {
+                task.sortStatus = .sorted(.afternoon)
+            } else if startDate.adjustedToCurrentDay >= eveningStart && startDate.adjustedToCurrentDay < eveningEnd {
+                task.sortStatus = .sorted(.evening)
+            } else {
+                task.sortStatus = .sorted(.other)
+            }
+            return task
         }
-        tasks.append(task)
-        self.tasks = tasks
-        DirectoryService.writeModelToDisk(tasks)
+    }
+    
+    public func sortTask(_ task: TaskItem, _ time: TimeSelection) async {
+        do {
+            var task = task
+            let duration: TimeInterval = 900 // 15 mins
+            try await task.sort(duration: duration, at: time, within: tasks, vm: self)
+            var tasks = self.tasks
+            tasks = tasks.filter {
+                $0.id != task.id
+            }
+            tasks.append(task)
+            self.tasks = tasks
+            DirectoryService.writeModelToDisk(tasks)
+        } catch {
+            let eventServiceError = error as? EventServiceError
+            switch eventServiceError {
+            case .noPermission:
+                noPermission = true
+            case .scheduleFull:
+                scheduleFull = true
+            case .none:
+                unknownError = true
+            }
+        }
     }
     
     public func unscheduleTask(_ task: TaskItem) {
         var task = task
         var tasks = self.tasks
-        if let date = task.scheduledDate {
+        if let _ = task.startDate {
             if task.sortStatus.sortName != "Skipped"  {
-                try? eventService.deleteEvent(for: date)
+                try? eventService.deleteEvent(for: task)
             }
         }
         tasks = tasks.filter {
             $0.id != task.id
         }
-        task.scheduledDate = nil
+        task.startDate = nil
         task.sortStatus = .unsorted
         tasks.append(task)
         DirectoryService.writeModelToDisk(tasks)
@@ -57,8 +129,8 @@ class ViewModel: ObservableObject {
     
     public func deleteTask(_ task: TaskItem) throws {
         var tasks = self.tasks
-        if let date = task.scheduledDate {
-            try? eventService.deleteEvent(for: date)
+        if let _ = task.startDate {
+            try? eventService.deleteEvent(for: task)
         }
         tasks = tasks.filter {
             $0.id != task.id
@@ -76,8 +148,22 @@ class ViewModel: ObservableObject {
         }
     }
     
+    public func openCalendar(for task: TaskItem) async {
+        guard task.sortStatus.case == .sorted else { return }
+        guard let date = task.startDate, let url = URL(string: "calshow:\(date.timeIntervalSinceReferenceDate)") else {
+            return
+        }
+        await UIApplication.shared.open(url)
+    }
+    
     init() {
         eventService = EventService.shared
         initTasks()
+        refreshTasks()
+        tasks.forEach { task in
+            if task.sortStatus == .previous {
+                print(task.name)
+            }
+        }
     }
 }

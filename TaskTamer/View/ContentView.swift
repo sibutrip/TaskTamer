@@ -11,21 +11,10 @@ struct ContentView: View {
     @StateObject var vm = ViewModel()
     var body: some View {
         TabView {
-            Group {
-                SortListView(vm: vm)
-                    .tabItem {
-                        Label("Disclosure", systemImage: "calendar")
-                    }
-                SortDragView(vm: vm)
-                    .tabItem {
-                        Label("Drag", systemImage: "calendar")
-                    }
-                SortSwipeView(vm: vm)
-                    .tabItem {
-                        Label("Swipe", systemImage: "calendar")
-                    }
-            }
-            .navigationTitle("Sort Tasks")
+            SortListView(vm: vm)
+                .tabItem {
+                    Label("Sort", systemImage: "calendar")
+                }
             AllTasksView(vm: vm)
                 .tabItem {
                     Label("All", systemImage: "tray.full")
@@ -33,6 +22,12 @@ struct ContentView: View {
         }
         .transition(.slide)
         .animation(.default, value: vm.tasks)
+        .sheet(isPresented: $vm.showingPreviousTaskSheet) {
+            PreviousTaskSheet(vm)
+        }
+        .sheet(isPresented: $vm.showingSettingsSheet) {
+            SettingsSheet(vm)
+        }
     }
 }
 

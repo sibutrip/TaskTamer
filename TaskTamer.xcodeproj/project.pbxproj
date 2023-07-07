@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		744C3ACE2A4F7EEB00CE124E /* DateComponents+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */; };
+		744C3AEA2A575C4C00CE124E /* CompleteTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */; };
+		744C3AEF2A57984E00CE124E /* CompleteTaskToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */; };
+		744C3AF12A57A0C500CE124E /* Bool+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AF02A57A0C500CE124E /* Bool+Extension.swift */; };
+		744C3AF42A57AA5100CE124E /* EventServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AF32A57AA5100CE124E /* EventServiceError.swift */; };
+		744C3AF62A58448900CE124E /* PreferredTimeBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AF52A58448900CE124E /* PreferredTimeBlocks.swift */; };
+		744C3AF82A58499D00CE124E /* TimeBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AF72A58499D00CE124E /* TimeBlocks.swift */; };
+		744C3AFB2A5886F300CE124E /* SettingsToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AFA2A5886F300CE124E /* SettingsToolbar.swift */; };
+		744C3AFD2A58908800CE124E /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AFC2A58908800CE124E /* SettingsSheet.swift */; };
+		744C3AFF2A5894A100CE124E /* ViewModel+TimeBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AFE2A5894A100CE124E /* ViewModel+TimeBlocks.swift */; };
 		745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745376B82A4B1FF2000382A0 /* SortSwipeView.swift */; };
 		74EFBDB92A49C191002C8388 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD8F2A49C191002C8388 /* ViewModel.swift */; };
 		74EFBDBA2A49C191002C8388 /* ADHDBrainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */; };
@@ -41,6 +51,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extension.swift"; sourceTree = "<group>"; };
+		744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskSheet.swift; sourceTree = "<group>"; };
+		744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskToolbar.swift; sourceTree = "<group>"; };
+		744C3AF02A57A0C500CE124E /* Bool+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bool+Extension.swift"; sourceTree = "<group>"; };
+		744C3AF22A57A3DC00CE124E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		744C3AF32A57AA5100CE124E /* EventServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventServiceError.swift; sourceTree = "<group>"; };
+		744C3AF52A58448900CE124E /* PreferredTimeBlocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredTimeBlocks.swift; sourceTree = "<group>"; };
+		744C3AF72A58499D00CE124E /* TimeBlocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeBlocks.swift; sourceTree = "<group>"; };
+		744C3AFA2A5886F300CE124E /* SettingsToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsToolbar.swift; sourceTree = "<group>"; };
+		744C3AFC2A58908800CE124E /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
+		744C3AFE2A5894A100CE124E /* ViewModel+TimeBlocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModel+TimeBlocks.swift"; sourceTree = "<group>"; };
 		745376B82A4B1FF2000382A0 /* SortSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortSwipeView.swift; sourceTree = "<group>"; };
 		748DAE3C29FD930D003A3B06 /* TaskTamer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskTamer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74EFBD8F2A49C191002C8388 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
@@ -86,6 +107,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		744C3AED2A57900D00CE124E /* CompleteTaskSheet */ = {
+			isa = PBXGroup;
+			children = (
+				744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */,
+				744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */,
+			);
+			path = CompleteTaskSheet;
+			sourceTree = "<group>";
+		};
+		744C3AF92A5886E700CE124E /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				744C3AFC2A58908800CE124E /* SettingsSheet.swift */,
+				744C3AF52A58448900CE124E /* PreferredTimeBlocks.swift */,
+				744C3AFA2A5886F300CE124E /* SettingsToolbar.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		748DAE3329FD930D003A3B06 = {
 			isa = PBXGroup;
 			children = (
@@ -105,6 +145,7 @@
 		74EFBD8D2A49C191002C8388 /* TaskTamer */ = {
 			isa = PBXGroup;
 			children = (
+				744C3AF22A57A3DC00CE124E /* Info.plist */,
 				74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */,
 				74EFBD932A49C191002C8388 /* Models */,
 				74EFBDB52A49C191002C8388 /* Services */,
@@ -120,6 +161,8 @@
 			isa = PBXGroup;
 			children = (
 				74EFBD8F2A49C191002C8388 /* ViewModel.swift */,
+				744C3AFE2A5894A100CE124E /* ViewModel+TimeBlocks.swift */,
+				74EFBDB12A49C191002C8388 /* PropertyWrappers */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -130,6 +173,8 @@
 				74EFBD942A49C191002C8388 /* TimeSelection.swift */,
 				74EFBD952A49C191002C8388 /* TaskItem.swift */,
 				74EFBD962A49C191002C8388 /* SortStatus.swift */,
+				744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */,
+				744C3AF02A57A0C500CE124E /* Bool+Extension.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -150,8 +195,9 @@
 				74EFBD9E2A49C191002C8388 /* SortDragView */,
 				74EFBD9A2A49C191002C8388 /* SortListView */,
 				74EFBDD82A49C2D6002C8388 /* AllTasks */,
-				74EFBDB12A49C191002C8388 /* PropertyWrapper */,
+				744C3AED2A57900D00CE124E /* CompleteTaskSheet */,
 				74EFBDAE2A49C191002C8388 /* Color+Extension.swift */,
+				744C3AF92A5886E700CE124E /* Settings */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -160,8 +206,8 @@
 			isa = PBXGroup;
 			children = (
 				74EFBD9C2A49C191002C8388 /* SortListView.swift */,
-				74EFBD9B2A49C191002C8388 /* DisclosureRow.swift */,
 				74EFBD9D2A49C191002C8388 /* SortListDisclosure.swift */,
+				74EFBD9B2A49C191002C8388 /* DisclosureRow.swift */,
 			);
 			path = SortListView;
 			sourceTree = "<group>";
@@ -209,18 +255,20 @@
 			path = ViewModifiers;
 			sourceTree = "<group>";
 		};
-		74EFBDB12A49C191002C8388 /* PropertyWrapper */ = {
+		74EFBDB12A49C191002C8388 /* PropertyWrappers */ = {
 			isa = PBXGroup;
 			children = (
+				744C3AF72A58499D00CE124E /* TimeBlocks.swift */,
 				74EFBDB22A49C191002C8388 /* Saving.swift */,
 			);
-			path = PropertyWrapper;
+			path = PropertyWrappers;
 			sourceTree = "<group>";
 		};
 		74EFBDB52A49C191002C8388 /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				74EFBDB62A49C191002C8388 /* EventService.swift */,
+				744C3AF32A57AA5100CE124E /* EventServiceError.swift */,
 				74EFBDB72A49C191002C8388 /* DirectoryService.swift */,
 				74EFBDB82A49C191002C8388 /* TaskService.swift */,
 			);
@@ -230,8 +278,8 @@
 		74EFBDD82A49C2D6002C8388 /* AllTasks */ = {
 			isa = PBXGroup;
 			children = (
-				74EFBDAF2A49C191002C8388 /* AllTasksRowView.swift */,
 				74EFBDB02A49C191002C8388 /* AllTasksView.swift */,
+				74EFBDAF2A49C191002C8388 /* AllTasksRowView.swift */,
 			);
 			path = AllTasks;
 			sourceTree = "<group>";
@@ -307,34 +355,44 @@
 			buildActionMask = 2147483647;
 			files = (
 				74EFBDC62A49C191002C8388 /* Time.swift in Sources */,
+				744C3ACE2A4F7EEB00CE124E /* DateComponents+Extension.swift in Sources */,
 				74EFBDD32A49C191002C8388 /* ContentView.swift in Sources */,
 				74EFBDCF2A49C191002C8388 /* Color+Extension.swift in Sources */,
+				744C3AF82A58499D00CE124E /* TimeBlocks.swift in Sources */,
+				744C3AF62A58448900CE124E /* PreferredTimeBlocks.swift in Sources */,
+				744C3AFD2A58908800CE124E /* SettingsSheet.swift in Sources */,
 				74EFBDC42A49C191002C8388 /* SkipTab.swift in Sources */,
 				74EFBDCB2A49C191002C8388 /* SortDragView.swift in Sources */,
 				74EFBDCC2A49C191002C8388 /* DragManager.swift in Sources */,
 				74EFBDD62A49C191002C8388 /* DirectoryService.swift in Sources */,
 				74EFBDD12A49C191002C8388 /* AllTasksView.swift in Sources */,
 				74EFBDBC2A49C191002C8388 /* TimeSelection.swift in Sources */,
+				744C3AEF2A57984E00CE124E /* CompleteTaskToolbar.swift in Sources */,
 				74EFBDCA2A49C191002C8388 /* DropPreference.swift in Sources */,
 				74EFBDC92A49C191002C8388 /* DismissKeyboardPreference.swift in Sources */,
+				744C3AFB2A5886F300CE124E /* SettingsToolbar.swift in Sources */,
 				74EFBDC12A49C191002C8388 /* SortListView.swift in Sources */,
 				74EFBDB92A49C191002C8388 /* ViewModel.swift in Sources */,
 				74EFBDC72A49C191002C8388 /* SortTab.swift in Sources */,
 				74EFBDBA2A49C191002C8388 /* ADHDBrainApp.swift in Sources */,
 				74EFBDC22A49C191002C8388 /* SortListDisclosure.swift in Sources */,
+				744C3AF42A57AA5100CE124E /* EventServiceError.swift in Sources */,
 				74EFBDC82A49C191002C8388 /* DragPreference.swift in Sources */,
 				74EFBDD22A49C191002C8388 /* Saving.swift in Sources */,
 				74EFBDBE2A49C191002C8388 /* SortStatus.swift in Sources */,
 				74EFBDCE2A49C191002C8388 /* Unsort.swift in Sources */,
+				744C3AEA2A575C4C00CE124E /* CompleteTaskSheet.swift in Sources */,
 				74EFBDC32A49C191002C8388 /* TaskRow.swift in Sources */,
 				74EFBDCD2A49C191002C8388 /* SwipeGesture.swift in Sources */,
 				745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */,
 				74EFBDBD2A49C191002C8388 /* TaskItem.swift in Sources */,
 				74EFBDC52A49C191002C8388 /* DayOverlay.swift in Sources */,
+				744C3AFF2A5894A100CE124E /* ViewModel+TimeBlocks.swift in Sources */,
 				74EFBDD72A49C191002C8388 /* TaskService.swift in Sources */,
 				74EFBDD02A49C191002C8388 /* AllTasksRowView.swift in Sources */,
 				74EFBDD52A49C191002C8388 /* EventService.swift in Sources */,
 				74EFBDC02A49C191002C8388 /* DisclosureRow.swift in Sources */,
+				744C3AF12A57A0C500CE124E /* Bool+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,7 +524,7 @@
 				DEVELOPMENT_TEAM = 3UR85MK9RT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = TaskTamer/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Need permission to create calendar event for task";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -482,9 +540,12 @@
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.CoryTripathy.TaskTamer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -499,7 +560,7 @@
 				DEVELOPMENT_TEAM = 3UR85MK9RT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = TaskTamer/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Need permission to create calendar event for task";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -515,9 +576,12 @@
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.CoryTripathy.TaskTamer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
