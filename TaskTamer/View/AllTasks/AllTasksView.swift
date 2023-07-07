@@ -82,12 +82,10 @@ struct AllTasksView: View {
                     List(0..<sortedTaskTimes.count, id: \.self) { index in
                         Section(sortedTaskTimes[index].key) {
                             ForEach(sortedTaskTimes[index].value) { task in
-                                Button {
-                                    Task { await vm.openCalendar(for: task) }
-                                } label: {
-                                    AllTasksRowView(task, vm)
-                                }
-                                .buttonStyle(.plain)
+                                AllTasksRowView(task, vm)
+                                    .onTapGesture {
+                                        Task { await vm.openCalendar(for: task) }
+                                    }
                             }
                         }
                         .transition(.slide)

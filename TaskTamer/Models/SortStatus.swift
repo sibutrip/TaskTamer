@@ -8,10 +8,28 @@
 import Foundation
 
 enum SortStatus: Equatable, Codable {
+    
+    enum Case{
+        case sorted, skipped, previous, unsorted
+    }
+    
     case sorted(TimeSelection)
     case skipped(TimeSelection)
     case previous
     case unsorted
+    
+    var `case`: Case {
+        switch self {
+        case .sorted(_):
+            return .sorted
+        case .skipped(_):
+            return .skipped
+        case .previous:
+            return .previous
+        case .unsorted:
+            return .unsorted
+        }
+    }
     
     var sortName: String {
         switch self {

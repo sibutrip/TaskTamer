@@ -40,4 +40,11 @@ extension Date {
     var adjustedToCurrentDay: Date {
         DateComponents(calendar: Calendar.current, timeZone: .autoupdatingCurrent, year: Calendar.current.component(.year, from: Date()), month: Calendar.current.component(.month, from: Date()), day: Calendar.current.component(.day, from: Date()), hour: Calendar.current.component(.hour, from: self), minute: Calendar.current.component(.minute, from: self), second: 0).date!
     }
+    var weekday: String? {
+        print(Calendar.current.weekdaySymbols)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        return dateFormatter.string(from: self).capitalized
+        // or use capitalized(with: locale) if you want
+    }
 }

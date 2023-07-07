@@ -100,7 +100,7 @@ struct SortListDisclosure: View {
                                 xOffset = abs(value.translation.width)
                             }
                         }
-                        if xOffset > geo.size.width * 2 / 3 {
+                        if xOffset > geo.size.width / 2 {
                             withAnimation { fullSwipeDelete = true }
                         } else {
                             withAnimation { fullSwipeDelete = false }

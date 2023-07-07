@@ -17,10 +17,21 @@ struct TaskItem: Identifiable, Equatable, Codable {
     var scheduleDescription: String {
         switch sortStatus {
         case .sorted(_):
-            if DateComponents(calendar: Calendar.autoupdatingCurrent, timeZone: .autoupdatingCurrent, day: Calendar.autoupdatingCurrent.component(.day, from: Date())) != DateComponents(calendar: Calendar.autoupdatingCurrent, timeZone: .autoupdatingCurrent, day: Calendar.autoupdatingCurrent.component(.day, from: self.startDate ?? Date.distantPast)) {
-                return "\(startDate?.formatted() ?? "") to \(endDate?.formatted(date: .omitted, time: .shortened) ?? "")"
+            guard let startDate = startDate, let endDate = endDate else { return "" }
+            let daysInWeek = Calendar.current.weekdaySymbols.count
+            let oneWeekForward = Calendar.current.date(byAdding: .day, value: daysInWeek, to: DateComponents.midnight.date!)!
+            
+            if DateComponents(calendar: Calendar.autoupdatingCurrent, timeZone: .autoupdatingCurrent, year: Calendar.autoupdatingCurrent.component(.year, from: Date()), month: Calendar.autoupdatingCurrent.component(.month, from: Date()), day: Calendar.autoupdatingCurrent.component(.day, from: Date())) == DateComponents(calendar: Calendar.autoupdatingCurrent, timeZone: .autoupdatingCurrent, year: Calendar.autoupdatingCurrent.component(.year, from: startDate), month: Calendar.autoupdatingCurrent.component(.month, from: startDate), day: Calendar.autoupdatingCurrent.component(.day, from: startDate)) {
+                return "Today, \(startDate.formatted(date: .omitted, time: .shortened)) to \(endDate.formatted(date: .omitted, time: .shortened))"
+            } else if DateComponents(calendar: Calendar.autoupdatingCurrent, timeZone: .autoupdatingCurrent, year: Calendar.autoupdatingCurrent.component(.year, from: Date()), month: Calendar.autoupdatingCurrent.component(.month, from: Date()), day: Calendar.autoupdatingCurrent.component(.day, from: Date())) == DateComponents(calendar: Calendar.autoupdatingCurrent, timeZone: .autoupdatingCurrent, year: Calendar.autoupdatingCurrent.component(.year, from: Date()), month: Calendar.autoupdatingCurrent.component(.month, from: Date()), day: Calendar.autoupdatingCurrent.component(.day, from: startDate) - 1) {
+                return "Tomorrow, \(startDate.formatted(date: .omitted, time: .shortened)) to \(endDate.formatted(date: .omitted, time: .shortened))"
+            } else if startDate < oneWeekForward {
+                if let weekday = startDate.weekday {
+                    return "\(weekday), \(startDate.formatted(date: .omitted, time: .shortened)) to \(endDate.formatted(date: .omitted, time: .shortened))"
+                }
+                fallthrough
             } else {
-                return "Today, \(startDate?.formatted(date: .omitted, time: .shortened) ?? "") to \(endDate?.formatted(date: .omitted, time: .shortened) ?? "")"
+                return "\(startDate.formatted(date:.abbreviated, time: .shortened)) to \(endDate.formatted(date: .omitted, time: .shortened))"
             }
         case .skipped(_):
             return "skipped until \(startDate?.formatted(date:.abbreviated, time: .omitted) ?? "")"
@@ -31,12 +42,12 @@ struct TaskItem: Identifiable, Equatable, Codable {
         }
     }
     
-//    static var morningStartTime = Date.hourAddingDayIfNeeded(from: 8)
-//    static var morningEndTime = Date.hourAddingDayIfNeeded(from: 12)
-//    static var afternoonStartTime = Date.hourAddingDayIfNeeded(from: 13)
-//    static var afternoonEndTime = Date.hourAddingDayIfNeeded(from: 17)
-//    static var eveningStartTime = Date.hourAddingDayIfNeeded(from: 17)
-//    static var eveningEndTime = Date.hourAddingDayIfNeeded(from: 21)
+    //    static var morningStartTime = Date.hourAddingDayIfNeeded(from: 8)
+    //    static var morningEndTime = Date.hourAddingDayIfNeeded(from: 12)
+    //    static var afternoonStartTime = Date.hourAddingDayIfNeeded(from: 13)
+    //    static var afternoonEndTime = Date.hourAddingDayIfNeeded(from: 17)
+    //    static var eveningStartTime = Date.hourAddingDayIfNeeded(from: 17)
+    //    static var eveningEndTime = Date.hourAddingDayIfNeeded(from: 21)
     
     static var morningStartTime = DateComponents.hour(from: 8).date!
     static var morningEndTime = DateComponents.hour(from: 12).date!

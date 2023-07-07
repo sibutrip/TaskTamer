@@ -56,6 +56,8 @@ class ViewModel: ObservableObject {
             if endDate < Date() {
                 task.sortStatus = .previous
                 return task
+            } else if task.sortStatus.case == .skipped {
+                return task
             } else if startDate.adjustedToCurrentDay >= TaskItem.morningStartTime.adjustedToCurrentDay && startDate.adjustedToCurrentDay < TaskItem.morningEndTime.adjustedToCurrentDay {
                 task.sortStatus = .sorted(.morning)
             } else if startDate.adjustedToCurrentDay >= TaskItem.afternoonStartTime.adjustedToCurrentDay && startDate.adjustedToCurrentDay < TaskItem.afternoonEndTime.adjustedToCurrentDay {
@@ -134,6 +136,7 @@ class ViewModel: ObservableObject {
     }
     
     public func openCalendar(for task: TaskItem) async {
+        guard task.sortStatus.case == .sorted else { return }
         guard let date = task.startDate, let url = URL(string: "calshow:\(date.timeIntervalSinceReferenceDate)") else {
             return
         }
