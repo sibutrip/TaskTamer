@@ -34,11 +34,11 @@ struct TaskItem: Identifiable, Equatable, Codable {
                 return "\(startDate.formatted(date:.abbreviated, time: .shortened)) to \(endDate.formatted(date: .omitted, time: .shortened))"
             }
         case .skipped(_):
-            return "skipped until \(startDate?.formatted(date:.abbreviated, time: .omitted) ?? "")"
+            return "Skipped until \(startDate?.formatted(date:.abbreviated, time: .omitted) ?? "")"
         case .unsorted:
-            return "unsorted"
+            return "Unsorted"
         case .previous:
-            return "previous"
+            return "Previous"
         }
     }
     
@@ -48,13 +48,6 @@ struct TaskItem: Identifiable, Equatable, Codable {
     //    static var afternoonEndTime = Date.hourAddingDayIfNeeded(from: 17)
     //    static var eveningStartTime = Date.hourAddingDayIfNeeded(from: 17)
     //    static var eveningEndTime = Date.hourAddingDayIfNeeded(from: 21)
-    
-    static var morningStartTime = DateComponents.hour(from: 8).date!
-    static var morningEndTime = DateComponents.hour(from: 12).date!
-    static var afternoonStartTime = DateComponents.hour(from: 13).date!
-    static var afternoonEndTime = DateComponents.hour(from: 17).date!
-    static var eveningStartTime = DateComponents.hour(from: 17).date!
-    static var eveningEndTime = DateComponents.hour(from: 21).date!
     
     init(name: String) {
         id = UUID()

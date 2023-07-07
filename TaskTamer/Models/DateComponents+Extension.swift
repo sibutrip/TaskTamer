@@ -15,6 +15,9 @@ extension DateComponents {
     static func hour(from hour: Int) -> DateComponents {
         DateComponents(calendar: Calendar.current, timeZone: .autoupdatingCurrent, year: Calendar.current.component(.year, from: Date()), month: Calendar.current.component(.month, from: Date()), day: Calendar.current.component(.day, from: Date()), hour: hour, minute: 0, second: 0)
     }
+    static func hourAndMinute(from hour: Int, and minute: Int) -> DateComponents {
+        DateComponents(calendar: Calendar.current, timeZone: .autoupdatingCurrent, year: Calendar.current.component(.year, from: Date()), month: Calendar.current.component(.month, from: Date()), day: Calendar.current.component(.day, from: Date()), hour: hour, minute: minute, second: 0)
+    }
 }
 
 extension Date {
