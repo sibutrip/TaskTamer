@@ -37,4 +37,7 @@ extension Date {
         }
         return DateComponents(calendar: Calendar.current, timeZone: .autoupdatingCurrent, year: Calendar.current.component(.year, from: Date()), month: Calendar.current.component(.month, from: Date()), day: Calendar.current.component(.day, from: Date()), hour: Calendar.current.component(.hour, from: Date()), minute: filteredMinute, second: 0).date!
     }
+    var adjustedToCurrentDay: Date {
+        DateComponents(calendar: Calendar.current, timeZone: .autoupdatingCurrent, year: Calendar.current.component(.year, from: Date()), month: Calendar.current.component(.month, from: Date()), day: Calendar.current.component(.day, from: Date()), hour: Calendar.current.component(.hour, from: self), minute: Calendar.current.component(.minute, from: self), second: 0).date!
+    }
 }

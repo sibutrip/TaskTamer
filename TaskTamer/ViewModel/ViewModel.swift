@@ -42,19 +42,19 @@ class ViewModel: ObservableObject {
     private func refreshSortStatus(for tasks: [TaskItem]) -> [TaskItem] {
         return tasks.map { task in
             var task = task
-            guard let startDate = task.startDate, let _ = task.endDate else { return task }
-            //            print(TaskItem.morningStartTime,TaskItem.morningEndTime)
-            //            print(TaskItem.afternoonStartTime,TaskItem.afternoonEndTime)
-            //            print(TaskItem.eveningStartTime,TaskItem.eveningEndTime)
+            guard let startDate = task.startDate, let endDate = task.endDate else { return task }
+            print(TaskItem.morningStartTime.adjustedToCurrentDay,TaskItem.morningEndTime.adjustedToCurrentDay)
+//                        print(TaskItem.afternoonStartTime,TaskItem.afternoonEndTime)
+//                        print(TaskItem.eveningStartTime,TaskItem.eveningEndTime)
             
-            if task.sortStatus == .previous || task.endDate ?? Date.distantFuture < Date() {
+            if endDate < Date() {
                 task.sortStatus = .previous
                 return task
-            } else if startDate >= TaskItem.morningStartTime && startDate < TaskItem.morningEndTime {
+            } else if startDate.adjustedToCurrentDay >= TaskItem.morningStartTime.adjustedToCurrentDay && startDate.adjustedToCurrentDay < TaskItem.morningEndTime.adjustedToCurrentDay {
                 task.sortStatus = .sorted(.morning)
-            } else if startDate >= TaskItem.afternoonStartTime && startDate < TaskItem.afternoonEndTime {
+            } else if startDate.adjustedToCurrentDay >= TaskItem.afternoonStartTime.adjustedToCurrentDay && startDate.adjustedToCurrentDay < TaskItem.afternoonEndTime.adjustedToCurrentDay {
                 task.sortStatus = .sorted(.afternoon)
-            } else if startDate >= TaskItem.eveningStartTime && startDate < TaskItem.eveningEndTime {
+            } else if startDate.adjustedToCurrentDay >= TaskItem.eveningStartTime.adjustedToCurrentDay && startDate.adjustedToCurrentDay < TaskItem.eveningEndTime.adjustedToCurrentDay {
                 task.sortStatus = .sorted(.evening)
             } else {
                 task.sortStatus = .sorted(.other)

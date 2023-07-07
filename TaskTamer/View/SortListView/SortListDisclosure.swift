@@ -157,11 +157,10 @@ struct SortListDisclosure: View {
     
     func delete() {
         deleteModeEnabled = false
-        withAnimation(.easeIn(duration: 0.25)) { xOffset = geo.size.width }
+        withAnimation(.easeIn(duration: 0.25)) { xOffset = 0 }
         withAnimation(.easeIn(duration: 0.25)) { yFrame = 0 }
         vm.tasks.removeAll { $0 == task }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            xOffset = 0
             yFrame = 1
             taskDeleting = nil
         }

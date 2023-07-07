@@ -18,7 +18,7 @@ struct PreviousTaskSheet: View {
                 if vm.previousTasks.isEmpty {
                     VStack {
                         Text("No previous tasks to mark as complete!")
-                        Text("Sorted tasks in the past will appear here.")
+                        Text("Sorted tasks from the past will appear here.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

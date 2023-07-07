@@ -43,9 +43,11 @@ struct AllTasksRowView: View {
         
         VStack(alignment: .leading) {
             Text(task.name)
-            Text(task.scheduleDescription)
-                .font(.caption)
-                .foregroundColor(scheduleColor)
+            if !((task.sortStatus != .previous) ^ (task.sortStatus != .unsorted)) {
+                Text(task.scheduleDescription)
+                    .font(.caption)
+                    .foregroundColor(scheduleColor)
+            }
         }
         .modifier(Unsort($vm.tasks, task, vm))
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {

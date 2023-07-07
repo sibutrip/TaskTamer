@@ -11,6 +11,7 @@
 		744C3AEA2A575C4C00CE124E /* CompleteTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */; };
 		744C3AEC2A57900900CE124E /* CompleteTaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AEB2A57900900CE124E /* CompleteTaskRow.swift */; };
 		744C3AEF2A57984E00CE124E /* CompleteTaskToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */; };
+		744C3AF12A57A0C500CE124E /* Bool+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AF02A57A0C500CE124E /* Bool+Extension.swift */; };
 		745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745376B82A4B1FF2000382A0 /* SortSwipeView.swift */; };
 		74EFBDB92A49C191002C8388 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD8F2A49C191002C8388 /* ViewModel.swift */; };
 		74EFBDBA2A49C191002C8388 /* ADHDBrainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */; };
@@ -49,6 +50,7 @@
 		744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskSheet.swift; sourceTree = "<group>"; };
 		744C3AEB2A57900900CE124E /* CompleteTaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskRow.swift; sourceTree = "<group>"; };
 		744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskToolbar.swift; sourceTree = "<group>"; };
+		744C3AF02A57A0C500CE124E /* Bool+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bool+Extension.swift"; sourceTree = "<group>"; };
 		745376B82A4B1FF2000382A0 /* SortSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortSwipeView.swift; sourceTree = "<group>"; };
 		748DAE3C29FD930D003A3B06 /* TaskTamer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskTamer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74EFBD8F2A49C191002C8388 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				74EFBD952A49C191002C8388 /* TaskItem.swift */,
 				74EFBD962A49C191002C8388 /* SortStatus.swift */,
 				744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */,
+				744C3AF02A57A0C500CE124E /* Bool+Extension.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				74EFBDD02A49C191002C8388 /* AllTasksRowView.swift in Sources */,
 				74EFBDD52A49C191002C8388 /* EventService.swift in Sources */,
 				74EFBDC02A49C191002C8388 /* DisclosureRow.swift in Sources */,
+				744C3AF12A57A0C500CE124E /* Bool+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
