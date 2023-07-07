@@ -78,6 +78,7 @@ struct PreferredTimeBlocks: View {
             vm.afternoonEndtime = afternoonEnd
             vm.eveningStartTime = eveningStart
             vm.eveningEndTime = eveningEnd
+            vm.refreshTasks()
             dismiss()
         }
     }

@@ -49,9 +49,6 @@ class ViewModel: ObservableObject {
     
     public func refreshTasks() {
         let tasks = eventService.updateTaskTimes(for: tasks)
-//        if tasks.contains(where: { $0.sortStatus == .previous }) {
-//            self.showingPreviousTaskSheet = true
-//        }
         self.tasks = refreshSortStatus(for: tasks)
     }
     

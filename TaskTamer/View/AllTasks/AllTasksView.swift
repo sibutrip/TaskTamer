@@ -96,6 +96,7 @@ struct AllTasksView: View {
             .onChange(of: scenePhase) { newValue in
                 if newValue == .active { vm.refreshTasks() }
             }
+            .onAppear { vm.refreshTasks() }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     CompleteTaskToolbar(vm)

@@ -123,6 +123,7 @@ class EventService {
             return (startDate,endDate)
         }
         .filter { $0.0 != $0.1 }
+        .filter { $0.0 < $0.1}
         return freeTime
     }
     
