@@ -53,6 +53,21 @@ struct AllTasksRowView: View {
             }
         }
         .contentShape(Rectangle())
+        .contextMenu {
+            Menu("Edit Duration") {
+                    ForEach(Array(stride(from: 15, to: 241, by: 15)), id:\.self) { num in
+                        let hours = num / 60
+                        let mins = num % 60
+                        let timeMins = hours * 60 + mins
+                        let duration = Duration.seconds(timeMins * 60)
+                        let format = duration.formatted(
+                            .units(allowed: [.hours, .minutes, .seconds, .milliseconds], width: .wide))
+                        Button(format) {
+                            reschedule(task: task, at: timeMins)
+                        }
+                    }
+            }
+        }
         .modifier(Unsort($vm.tasks, task, vm))
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             //TODO: make this a viewmodifier
@@ -75,5 +90,22 @@ struct AllTasksRowView: View {
     init(_ task: TaskItem, _ vm: ViewModel) {
         self.task = task
         self.vm = vm
+    }
+}
+
+extension AllTasksRowView {
+    func reschedule(task: TaskItem, at time: Int) {
+        Task {
+            let timeSelection: TimeSelection
+            switch task.sortStatus {
+            case .sorted(let sort):
+                timeSelection = sort
+            case .skipped(let skip):
+                timeSelection = skip
+            case .previous, .unsorted:
+                return
+            }
+            await vm.rescheduleTask(task, timeSelection, duration: time)
+        }
     }
 }

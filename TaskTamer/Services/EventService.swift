@@ -14,10 +14,25 @@ class EventService {
     
     private let eventStore: EKEventStore
     
-    public func deleteEvent(for task: TaskItem) throws {
+    var rescheduledEvent: EKEvent?
+    
+    public func removeRescheduledEvent() {
+        do {
+            guard let rescheduledEvent = rescheduledEvent else  {return }
+            try eventStore.remove(rescheduledEvent, span: .thisEvent)
+            self.rescheduledEvent = nil
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    public func deleteEvent(for task: inout TaskItem) throws {
+        if task.eventID == "" { return }
         let event = eventStore.event(withIdentifier: task.eventID)
         if let event = event {
+//            lastDeletedEvent = event
             try eventStore.remove(event, span: .thisEvent)
+            task.eventID = ""
         } else {
             print("no event!")
         }
@@ -53,14 +68,14 @@ class EventService {
         } else { throw EventServiceError.noPermission }
     }
     
-    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem], vm: ViewModel) async throws -> (Date,Date)? {
+    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem], vm: ViewModel, rescheduling task: TaskItem? = nil) async throws -> (Date,Date)? {
         if firstTimeAddingEvent {
             guard await requestCalendarPermission() else {
                 throw EventServiceError.noPermission
             }
             firstTimeAddingEvent = false
         }
-        let availableDates = try await fetchAvailableDates(for: timeSelection, within: tasks, vm: vm)
+        let availableDates = try await fetchAvailableDates(for: timeSelection, within: tasks, vm: vm, rescheduling: task)
             .flatMap { (startTime, endTime) in
                 let distance = startTime.distance(to: endTime)
                 let numberOfAvailableSlots = Int(distance / duration) // rounds down
@@ -78,7 +93,7 @@ class EventService {
     }
     
     /// returns [(start date, end date)] for free times in given TimeSelection
-    @MainActor private func fetchAvailableDates(for timeSelection: TimeSelection, within tasks: [TaskItem], vm: ViewModel) throws -> [(Date,Date)] {
+    @MainActor private func fetchAvailableDates(for timeSelection: TimeSelection, within tasks: [TaskItem], vm: ViewModel, rescheduling task: TaskItem? = nil) throws -> [(Date,Date)] {
         var startDate: Date
         var endDate: Date
         var midnight = DateComponents.midnight.date!
@@ -103,8 +118,13 @@ class EventService {
         }
         guard let calendar = eventStore.defaultCalendarForNewEvents else { throw EventServiceError.noPermission }
         let predicate = eventStore.predicateForEvents(withStart: midnight, end: endDate, calendars: [calendar])
-        let events = eventStore.events(matching: predicate)
+        var events = eventStore.events(matching: predicate)
             .filter { $0.endDate <= endDate && $0.endDate > startDate }
+        if task != nil {
+            let eventToRecchedule = events.first { $0.eventIdentifier == task!.eventID }
+            self.rescheduledEvent = eventToRecchedule
+            events = events.filter { $0.eventIdentifier != task!.eventID }
+        }
         var freeTime: [(Date,Date)] = (0..<events.count).map { index in
             let event = events[index]
             if index == 0 {

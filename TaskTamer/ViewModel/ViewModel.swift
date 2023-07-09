@@ -26,8 +26,6 @@ class ViewModel: ObservableObject {
     @TimeBlock("afternoonEnd", hour: 17, minute: 0) var afternoonEndtime
     @TimeBlock("eveningStart", hour: 17, minute: 0) var eveningStartTime
     @TimeBlock("eveningEnd", hour: 21, minute: 0) var eveningEndTime
-
-//    @Published var eventServiceError: EventServiceError?
     
     
     let eventService: EventService
@@ -64,9 +62,6 @@ class ViewModel: ObservableObject {
         return tasks.map { task in
             var task = task
             guard let startDate = task.startDate, let endDate = task.endDate else { return task }
-//            print(TaskItem.morningStartTime.adjustedToCurrentDay,TaskItem.morningEndTime.adjustedToCurrentDay)
-//                        print(TaskItem.afternoonStartTime,TaskItem.afternoonEndTime)
-//                        print(TaskItem.eveningStartTime,TaskItem.eveningEndTime)
             if endDate < Date() {
                 task.sortStatus = .previous
                 return task
@@ -85,12 +80,13 @@ class ViewModel: ObservableObject {
         }
     }
     
-    public func sortTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900) async {
+    /// duration in minutes, returns a bool to indicate success or not
+    public func sortTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900, isRescheduling: Bool = false) async -> Bool {
         do {
             var task = task
             let duration = Double(duration * 60)
 //            let duration: TimeInterval = 900 // 15 mins
-            try await task.sort(duration: duration, at: time, within: tasks, vm: self)
+            try await task.sort(duration: duration, at: time, within: tasks, vm: self, isRescheduling: isRescheduling)
             var tasks = self.tasks
             tasks = tasks.filter {
                 $0.id != task.id
@@ -98,6 +94,7 @@ class ViewModel: ObservableObject {
             tasks.append(task)
             self.tasks = tasks
             DirectoryService.writeModelToDisk(tasks)
+            return true
         } catch {
             let eventServiceError = error as? EventServiceError
             switch eventServiceError {
@@ -108,6 +105,7 @@ class ViewModel: ObservableObject {
             case .none:
                 unknownError = true
             }
+            return false
         }
     }
     
@@ -116,7 +114,7 @@ class ViewModel: ObservableObject {
         var tasks = self.tasks
         if let _ = task.startDate {
             if task.sortStatus.sortName != "Skipped"  {
-                try? eventService.deleteEvent(for: task)
+                try? eventService.deleteEvent(for: &task)
             }
         }
         tasks = tasks.filter {
@@ -130,15 +128,22 @@ class ViewModel: ObservableObject {
     }
     
     public func deleteTask(_ task: TaskItem) throws {
+        var task = task
         var tasks = self.tasks
         if let _ = task.startDate {
-            try? eventService.deleteEvent(for: task)
+            try? eventService.deleteEvent(for: &task)
         }
         tasks = tasks.filter {
             $0.id != task.id
         }
         DirectoryService.writeModelToDisk(tasks)
         self.tasks = tasks
+    }
+    
+    public func rescheduleTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900) async {
+        if await sortTask(task, time, duration: duration, isRescheduling: true) {
+            eventService.removeRescheduledEvent()
+        }
     }
     
     private func initTasks() {

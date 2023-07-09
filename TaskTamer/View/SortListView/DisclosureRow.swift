@@ -21,6 +21,7 @@ struct DisclosureRow: View {
             HStack {
                 ForEach(times) { skip in
                     Button {
+                        Haptic.medium()
                         Task {
                             await vm.sortTask(task, skip.timeSelection, duration: timeBlockDuration)
                             taskExpanded = nil

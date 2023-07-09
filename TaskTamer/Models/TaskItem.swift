@@ -42,6 +42,11 @@ struct TaskItem: Identifiable, Equatable, Codable {
         }
     }
     
+    var duration: Int? {
+        guard let startDate = self.startDate, let endDate = self.endDate else { return nil }
+        return Int(startDate.distance(to: endDate))
+    }
+    
     init(name: String) {
         id = UUID()
         eventID = ""
@@ -64,11 +69,12 @@ struct TaskItem: Identifiable, Equatable, Codable {
         }
     }
     
-    mutating func sort(duration: TimeInterval, at time: TimeSelection, within tasks: [TaskItem], vm: ViewModel) async throws {
+    mutating func sort(duration: TimeInterval, at time: TimeSelection, within tasks: [TaskItem], vm: ViewModel, isRescheduling: Bool = false) async throws {
         switch time {
         case .morning, .afternoon, .evening:
             let eventService = EventService.shared
-            let scheduledDate = try await eventService.selectDate(duration: duration, from: time, within: tasks, vm: vm)
+            let taskToReschedule = isRescheduling ? self : nil
+            let scheduledDate = try await eventService.selectDate(duration: duration, from: time, within: tasks, vm: vm, rescheduling: taskToReschedule)
             guard let scheduledDate = scheduledDate else {
                 throw EventServiceError.scheduleFull
             }

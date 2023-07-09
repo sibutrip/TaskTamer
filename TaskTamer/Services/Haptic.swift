@@ -10,6 +10,7 @@ import CoreHaptics
 import SwiftUI
 
 class Haptic {
+    private init() { }
     static func medium() {
         let medium = UIImpactFeedbackGenerator(style: .medium)
         medium.impactOccurred()
