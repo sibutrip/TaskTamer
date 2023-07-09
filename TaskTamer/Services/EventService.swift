@@ -121,8 +121,8 @@ class EventService {
         var events = eventStore.events(matching: predicate)
             .filter { $0.endDate <= endDate && $0.endDate > startDate }
         if task != nil {
-            let eventToRecchedule = events.first { $0.eventIdentifier == task!.eventID }
-            self.rescheduledEvent = eventToRecchedule
+            let eventToReschedule = eventStore.event(withIdentifier: task!.eventID)
+            self.rescheduledEvent = eventToReschedule
             events = events.filter { $0.eventIdentifier != task!.eventID }
         }
         var freeTime: [(Date,Date)] = (0..<events.count).map { index in

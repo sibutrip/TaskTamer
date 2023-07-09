@@ -18,6 +18,17 @@ enum SortStatus: Equatable, Codable {
     case previous
     case unsorted
     
+    var timeSelection: TimeSelection? {
+        switch self {
+        case .sorted(let timeSelection):
+            return timeSelection
+        case .skipped(let timeSelection):
+            return timeSelection
+        case .previous, .unsorted:
+            return nil
+        }
+    }
+    
     var `case`: Case {
         switch self {
         case .sorted(_):

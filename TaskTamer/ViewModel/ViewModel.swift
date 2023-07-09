@@ -142,6 +142,7 @@ class ViewModel: ObservableObject {
     
     public func rescheduleTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900) async {
         if await sortTask(task, time, duration: duration, isRescheduling: true) {
+            
             eventService.removeRescheduledEvent()
         }
     }

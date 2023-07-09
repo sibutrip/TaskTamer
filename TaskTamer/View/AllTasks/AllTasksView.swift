@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AllTasksView: View {
     @ObservedObject var vm: ViewModel
-    @Environment(\.scenePhase) var scenePhase
+    @Environment(\.scenePhase) private var scenePhase
     
     var sortedTaskTimes: [Dictionary<String, [TaskItem]>.Element] {
         var taskTimes: [String:[TaskItem]] = [:]

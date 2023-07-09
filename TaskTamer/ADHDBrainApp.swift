@@ -13,6 +13,7 @@ struct TaskTamerApp: App {
         WindowGroup {
             ContentView()
 //            PreferredTimeBlocks(ViewModel())
+//            AllTasksView(vm: ViewModel())
         }
     }
 }

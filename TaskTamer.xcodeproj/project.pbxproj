@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		741D63182A5B17C4004AE206 /* ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741D63172A5B17C4004AE206 /* ContextMenu.swift */; };
 		744C3ACE2A4F7EEB00CE124E /* DateComponents+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */; };
 		744C3AEA2A575C4C00CE124E /* CompleteTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */; };
 		744C3AEF2A57984E00CE124E /* CompleteTaskToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */; };
@@ -54,6 +55,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		741D63172A5B17C4004AE206 /* ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenu.swift; sourceTree = "<group>"; };
 		744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extension.swift"; sourceTree = "<group>"; };
 		744C3AE92A575C4C00CE124E /* CompleteTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskSheet.swift; sourceTree = "<group>"; };
 		744C3AEE2A57984E00CE124E /* CompleteTaskToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTaskToolbar.swift; sourceTree = "<group>"; };
@@ -289,6 +291,7 @@
 			children = (
 				74EFBDB02A49C191002C8388 /* AllTasksView.swift */,
 				74EFBDAF2A49C191002C8388 /* AllTasksRowView.swift */,
+				741D63172A5B17C4004AE206 /* ContextMenu.swift */,
 			);
 			path = AllTasks;
 			sourceTree = "<group>";
@@ -388,6 +391,7 @@
 				74EFBDC22A49C191002C8388 /* SortListDisclosure.swift in Sources */,
 				744C3AF42A57AA5100CE124E /* EventServiceError.swift in Sources */,
 				74EFBDC82A49C191002C8388 /* DragPreference.swift in Sources */,
+				741D63182A5B17C4004AE206 /* ContextMenu.swift in Sources */,
 				74EFBDD22A49C191002C8388 /* Saving.swift in Sources */,
 				74EFBDBE2A49C191002C8388 /* SortStatus.swift in Sources */,
 				74EFBDCE2A49C191002C8388 /* Unsort.swift in Sources */,

@@ -25,4 +25,5 @@ struct Time: Identifiable, Equatable {
         .init(name: "Skip 3 Days", image: "backward.3", timeSelection: .skip3, color: .red),
         .init(name: "Skip 7 Days", image: "backward.7", timeSelection: .skip7, color: .red)
     ]
+    static let all: [Time] = days + skips
 }

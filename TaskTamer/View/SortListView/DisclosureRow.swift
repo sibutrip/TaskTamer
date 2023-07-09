@@ -23,7 +23,7 @@ struct DisclosureRow: View {
                     Button {
                         Haptic.medium()
                         Task {
-                            await vm.sortTask(task, skip.timeSelection, duration: timeBlockDuration)
+                            _ = await vm.sortTask(task, skip.timeSelection, duration: timeBlockDuration)
                             taskExpanded = nil
                         }
                     } label: {
