@@ -25,7 +25,7 @@ struct TimeLengthStepper: View {
     }
     
     var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             Button {
                 let newValue = sliderValue - 15
                 withAnimation(Animation.easeInOut(duration: 0.1)) { sliderValue = newValue
@@ -42,6 +42,7 @@ struct TimeLengthStepper: View {
             }
             .disabled(sliderValue == 15)
             Divider()
+                .padding(.trailing, scaledPadding)
             label
                 .gesture(DragGesture(coordinateSpace: .global)
                     .onChanged { value in
@@ -66,6 +67,7 @@ struct TimeLengthStepper: View {
                 )
                 .frame(width: geo.size.width / 4)
             Divider()
+                .padding(.leading, scaledPadding)
             Button {
                 let newValue = sliderValue + 15
                 withAnimation(Animation.easeInOut(duration: 0.2 )) { sliderValue = newValue
