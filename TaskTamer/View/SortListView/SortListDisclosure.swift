@@ -21,7 +21,7 @@ struct SortListDisclosure: View {
     @Binding var taskDeleting: TaskItem?
     @State var deleteModeEnabled = false
     @State var fullSwipeDelete = false
-    @State var sliderValue: Int = 15
+    @State var timeBlockDuration: Int
     
     @State var xOffset: Double = 0
     @State var yFrame: Double = 1
@@ -141,11 +141,11 @@ struct SortListDisclosure: View {
                 VStack {
                     let layout = dynamicTypeSize > .xxLarge ? AnyLayout(VStackLayout(alignment: .center)) : AnyLayout(HStackLayout(alignment: .center))
                     layout {
-                        DisclosureRow(for: Time.skips, vm, task, $taskExpanded)
+                        DisclosureRow(for: Time.skips, vm, task, $taskExpanded, duration: $timeBlockDuration)
                         Spacer()
-                        DisclosureRow(for: Time.days, vm, task, $taskExpanded)
+                        DisclosureRow(for: Time.days, vm, task, $taskExpanded, duration: $timeBlockDuration)
                     }
-                    TimeLengthStepper(sliderValue: $sliderValue, geo: geo)
+                    TimeLengthStepper(sliderValue: $timeBlockDuration, geo: geo)
                         .padding(.vertical,scaledPadding)
                     Divider()
                 }
@@ -175,5 +175,6 @@ struct SortListDisclosure: View {
         self.geo = geo
         _taskExpanded = taskExpanded
         _taskDeleting = taskDeleting
+        _timeBlockDuration = State<Int>.init(initialValue: vm.timeBlockDuration)
     }
 }

@@ -73,6 +73,7 @@ struct TaskItem: Identifiable, Equatable, Codable {
                 throw EventServiceError.scheduleFull
             }
             (self.startDate, self.endDate) = scheduledDate
+//            print(startDate?.formatted(),endDate?.formatted())
             self.sortStatus = .sorted(time)
             try await eventService.scheduleEvent(for: &self)
         case .skip1:

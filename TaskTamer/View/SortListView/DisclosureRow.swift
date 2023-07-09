@@ -12,6 +12,7 @@ struct DisclosureRow: View {
     let task: TaskItem
     @ObservedObject var vm: ViewModel
     @Binding var taskExpanded: TaskItem?
+    @Binding var timeBlockDuration: Int
     
     let times: [Time]
     let rowTitle: String
@@ -21,7 +22,7 @@ struct DisclosureRow: View {
                 ForEach(times) { skip in
                     Button {
                         Task {
-                            await vm.sortTask(task, skip.timeSelection)
+                            await vm.sortTask(task, skip.timeSelection, duration: timeBlockDuration)
                             taskExpanded = nil
                         }
                     } label: {
@@ -47,11 +48,12 @@ struct DisclosureRow: View {
         }
     }
     
-    init(for times: [Time], _ vm: ViewModel, _ task: TaskItem, _ taskExpanded: Binding<TaskItem?>) {
+    init(for times: [Time], _ vm: ViewModel, _ task: TaskItem, _ taskExpanded: Binding<TaskItem?>, duration: Binding<Int>) {
         self.times = times
         self.task = task
         self.vm = vm
         _taskExpanded = taskExpanded
+        _timeBlockDuration = duration
         if times == Time.days {
             rowTitle = "Schedule"
         } else {

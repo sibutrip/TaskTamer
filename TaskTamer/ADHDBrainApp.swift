@@ -12,6 +12,7 @@ struct TaskTamerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+//            PreferredTimeBlocks(ViewModel())
         }
     }
 }

@@ -19,6 +19,7 @@
 		744C3AFF2A5894A100CE124E /* ViewModel+TimeBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AFE2A5894A100CE124E /* ViewModel+TimeBlocks.swift */; };
 		744C3B012A58CCA100CE124E /* TimeLengthStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3B002A58CCA100CE124E /* TimeLengthStepper.swift */; };
 		745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745376B82A4B1FF2000382A0 /* SortSwipeView.swift */; };
+		749281FE2A5A36B400208DBA /* TimeBlockDuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749281FD2A5A36B400208DBA /* TimeBlockDuration.swift */; };
 		74EFBDB92A49C191002C8388 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD8F2A49C191002C8388 /* ViewModel.swift */; };
 		74EFBDBA2A49C191002C8388 /* ADHDBrainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */; };
 		74EFBDBB2A49C191002C8388 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74EFBD922A49C191002C8388 /* Assets.xcassets */; };
@@ -66,6 +67,7 @@
 		744C3B002A58CCA100CE124E /* TimeLengthStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLengthStepper.swift; sourceTree = "<group>"; };
 		745376B82A4B1FF2000382A0 /* SortSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortSwipeView.swift; sourceTree = "<group>"; };
 		748DAE3C29FD930D003A3B06 /* TaskTamer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskTamer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		749281FD2A5A36B400208DBA /* TimeBlockDuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeBlockDuration.swift; sourceTree = "<group>"; };
 		74EFBD8F2A49C191002C8388 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ADHDBrainApp.swift; sourceTree = "<group>"; };
 		74EFBD922A49C191002C8388 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			children = (
 				744C3AFC2A58908800CE124E /* SettingsSheet.swift */,
 				744C3AF52A58448900CE124E /* PreferredTimeBlocks.swift */,
+				749281FD2A5A36B400208DBA /* TimeBlockDuration.swift */,
 				744C3AFA2A5886F300CE124E /* SettingsToolbar.swift */,
 			);
 			path = Settings;
@@ -387,6 +390,7 @@
 				744C3AEA2A575C4C00CE124E /* CompleteTaskSheet.swift in Sources */,
 				74EFBDC32A49C191002C8388 /* TaskRow.swift in Sources */,
 				74EFBDCD2A49C191002C8388 /* SwipeGesture.swift in Sources */,
+				749281FE2A5A36B400208DBA /* TimeBlockDuration.swift in Sources */,
 				745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */,
 				74EFBDBD2A49C191002C8388 /* TaskItem.swift in Sources */,
 				74EFBDC52A49C191002C8388 /* DayOverlay.swift in Sources */,
