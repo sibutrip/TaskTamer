@@ -8,36 +8,28 @@
 import SwiftUI
 
 struct TimeLengthStepper: View {
+    let increments: CGFloat
+    let geo: GeometryProxy
     @Environment(\.dynamicTypeSize) var textSize
     @Binding var sliderValue: Int
-    let geo: GeometryProxy
     @ScaledMetric(relativeTo: .body) var scaledPadding: CGFloat = 10
-    @State var hours: String
-    @State var mins: String
+    @State var numberOfDragTicks = 0
+    
+    var hours: String { String(sliderValue / 60) }
+    var mins: String { String(sliderValue % 60) }
+    
     init(sliderValue: Binding<Int>, geo: GeometryProxy) {
         _sliderValue = sliderValue
         self.geo = geo
-        _hours = State<String>.init(initialValue: String(sliderValue.wrappedValue / 60))
-        _mins = State<String>.init(initialValue: String(sliderValue.wrappedValue % 60))
+        increments = geo.size.width / 20
     }
-    
-    func update(with newValue: Int) {
-        let mins = newValue % 60
-        let hours = newValue / 60
-        withAnimation(Animation.easeInOut(duration: 0.2)) {
-            self.hours = String(hours)
-            self.mins = String(mins)
-        }
-        self.sliderValue = newValue
-    }
-    
-    
     
     var body: some View {
         HStack {
             Button {
                 let newValue = sliderValue - 15
-                update(with: newValue)
+                withAnimation(Animation.easeInOut(duration: 0.1)) { sliderValue = newValue
+                }
             } label: {
                 ZStack {
                     Text("")
@@ -51,11 +43,33 @@ struct TimeLengthStepper: View {
             .disabled(sliderValue == 15)
             Divider()
             label
+                .gesture(DragGesture(coordinateSpace: .global)
+                    .onChanged { value in
+                        let location = value.translation.width - CGFloat(numberOfDragTicks) * increments
+                        var newSliderValue = sliderValue
+                        if location > increments {
+                            newSliderValue += 15
+                            numberOfDragTicks += 1
+                        } else if location < -increments {
+                            newSliderValue -= 15
+                            numberOfDragTicks -= 1
+                        }
+                        if newSliderValue <= 240 && newSliderValue > 0 {
+                            withAnimation(Animation.easeInOut(duration: 0.1)) {
+                                sliderValue = newSliderValue
+                            }
+                        }
+                    }
+                    .onEnded { _ in
+                        numberOfDragTicks = 0
+                    }
+                )
                 .frame(width: geo.size.width / 4)
             Divider()
             Button {
                 let newValue = sliderValue + 15
-                update(with: newValue)
+                withAnimation(Animation.easeInOut(duration: 0.2 )) { sliderValue = newValue
+                }
             } label: {
                 ZStack {
                     Text("")
@@ -87,6 +101,7 @@ struct TimeLengthStepper: View {
                             .foregroundColor(.secondary)
                             .font(.caption)
                             .lineLimit(1)
+                            .minimumScaleFactor(0.1)
                     }
                 }
                 if mins != "0" {
@@ -97,6 +112,7 @@ struct TimeLengthStepper: View {
                             .foregroundColor(.secondary)
                             .font(.caption)
                             .lineLimit(1)
+                            .minimumScaleFactor(0.1)
                     }
                 }
             }
