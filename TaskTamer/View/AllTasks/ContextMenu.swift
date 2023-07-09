@@ -12,12 +12,9 @@ struct AllTasksContextMenu: ViewModifier {
     @ObservedObject var vm: ViewModel
     let task: TaskItem
     func body(content: Content) -> some View {
-        if task.sortStatus == .unsorted {
-            content
-        } else {
             content
                 .contextMenu {
-                    if !((task.sortStatus == .sorted(.other)) ^ (task.sortStatus.case ==  .skipped)) {
+                    if !((task.sortStatus == .sorted(.other)) ^ (task.sortStatus.case ==  .skipped) ^ (task.sortStatus == .unsorted)) {
                         Menu {
                             ForEach(Array(stride(from: 15, to: 241, by: 15)), id:\.self) { num in
                                 if num != task.duration(vm) {
@@ -64,7 +61,6 @@ struct AllTasksContextMenu: ViewModifier {
                         Label("Skip", systemImage: "gobackward")
                     }
                 }
-        }
     }
     init(task: TaskItem, vm: ViewModel) {
         self.task = task
@@ -86,8 +82,7 @@ struct AllTasksContextMenu: ViewModifier {
     }
     func rescheduleInDifferentTimeBlock(task: TaskItem, at timeSelection: TimeSelection) {
         Task {
-            let duration = await task.duration(vm)
-//            print(duration)
+            let duration = task.duration(vm)
             switch timeSelection {
             case .morning, .afternoon, .evening:
                 await vm.rescheduleTask(task, timeSelection, duration: duration)
