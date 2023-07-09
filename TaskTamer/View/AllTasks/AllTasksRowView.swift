@@ -62,9 +62,6 @@ struct AllTasksRowView: View {
                 } catch {
                     deleteDidFail = true
                 }
-//                vm.tasks = vm.tasks.filter {
-//                    $0.id != task.id
-//                }
             } label: {
                 Label("Delete", systemImage: "trash")
             }

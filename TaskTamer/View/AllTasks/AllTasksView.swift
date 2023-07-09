@@ -86,6 +86,12 @@ struct AllTasksView: View {
                                     .onTapGesture {
                                         Task { await vm.openCalendar(for: task) }
                                     }
+                                    .onLongPressGesture(minimumDuration: 0.5) {
+                                        //
+                                    } onPressingChanged: { _ in
+                                        //
+                                    }
+
                             }
                         }
                         .transition(.slide)
