@@ -22,7 +22,7 @@ struct TimeLengthStepper: View {
     init(sliderValue: Binding<Int>, geo: GeometryProxy) {
         _sliderValue = sliderValue
         self.geo = geo
-        increments = geo.size.width / 20
+        increments = geo.size.width / 10
     }
     
     var body: some View {
@@ -105,11 +105,15 @@ extension TimeLengthStepper {
                 if location > increments {
                     newSliderValue += 15
                     numberOfDragTicks += 1
-                    haptic.impactOccurred()
+                    if newSliderValue < 240 && newSliderValue > 0 {
+                        haptic.impactOccurred()
+                    }
                 } else if location < -increments {
                     newSliderValue -= 15
                     numberOfDragTicks -= 1
-                    haptic.impactOccurred()
+                    if newSliderValue < 240 && newSliderValue > 0 {
+                        haptic.impactOccurred()
+                    }
                 }
                 if newSliderValue <= 240 && newSliderValue > 0 {
                     withAnimation(Animation.easeInOut(duration: 0.1)) {
