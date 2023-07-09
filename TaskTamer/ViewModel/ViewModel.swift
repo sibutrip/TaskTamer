@@ -14,6 +14,7 @@ class ViewModel: ObservableObject {
     
     @Published var showingPreviousTaskSheet = false
     @Published var showingSettingsSheet = false
+    @AppStorage("timeBlockDuration") var timeBlockDuration = 15
 
     @Published var scheduleFull = false
     @Published var noPermission = false
@@ -84,10 +85,11 @@ class ViewModel: ObservableObject {
         }
     }
     
-    public func sortTask(_ task: TaskItem, _ time: TimeSelection) async {
+    public func sortTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900) async {
         do {
             var task = task
-            let duration: TimeInterval = 900 // 15 mins
+            let duration = Double(duration * 60)
+//            let duration: TimeInterval = 900 // 15 mins
             try await task.sort(duration: duration, at: time, within: tasks, vm: self)
             var tasks = self.tasks
             tasks = tasks.filter {

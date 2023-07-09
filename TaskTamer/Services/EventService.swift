@@ -40,11 +40,12 @@ class EventService {
             throw EventServiceError.noPermission
         }
         if accessGranted {
-            guard let startDate = task.startDate else { return }
+            guard let startDate = task.startDate, let endDate = task.endDate else { return }
             let event = EKEvent(eventStore: eventStore)
             event.title = task.name
             event.startDate = startDate
-            event.endDate = startDate.addingTimeInterval(900)
+            let duration = Date.distance(startDate)(to: endDate)
+            event.endDate = startDate.addingTimeInterval(duration)
             event.calendar = eventStore.defaultCalendarForNewEvents
             event.addAlarm(.init(absoluteDate: startDate))
             try eventStore.save(event, span: .thisEvent)

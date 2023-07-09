@@ -16,56 +16,68 @@ struct PreferredTimeBlocks: View {
     @State var afternoonEnd: Date
     @State var eveningStart: Date
     @State var eveningEnd: Date
+    @State var timeBlockDuration: Int
     
     @State var invalidTimes = false
     
     var body: some View {
-        Form {
-            Section("Morning") {
-                DatePicker("Start", selection: $morningStart, displayedComponents: .hourAndMinute)
-                DatePicker("End", selection: $morningEnd, displayedComponents: .hourAndMinute)
-            }
-            Section("Afternoon") {
-                DatePicker("Start", selection: $afternoonStart, displayedComponents: .hourAndMinute)
-                DatePicker("End", selection: $afternoonEnd, displayedComponents: .hourAndMinute)
-            }
-            Section("Evening") {
-                DatePicker("Start", selection: $eveningStart, displayedComponents: .hourAndMinute)
-                DatePicker("End", selection: $eveningEnd, displayedComponents: .hourAndMinute)
-            }
-            .onAppear {
-                UIDatePicker.appearance().minuteInterval = 15
-                load()
-            }
-            HStack {
-                Button {
-                    reset()
-                } label: {
+        GeometryReader { geo in
+            Form {
+                Section("Morning Time Block") {
+                    DatePicker("Start", selection: $morningStart, displayedComponents: .hourAndMinute)
+                    DatePicker("End", selection: $morningEnd, displayedComponents: .hourAndMinute)
+                }
+                Section("Afternoon Time Block") {
+                    DatePicker("Start", selection: $afternoonStart, displayedComponents: .hourAndMinute)
+                    DatePicker("End", selection: $afternoonEnd, displayedComponents: .hourAndMinute)
+                }
+                Section("Evening Time Block") {
+                    DatePicker("Start", selection: $eveningStart, displayedComponents: .hourAndMinute)
+                    DatePicker("End", selection: $eveningEnd, displayedComponents: .hourAndMinute)
+                }
+                Section("Default Time Block Duration") {
                     HStack {
                         Spacer()
-                        Text("Reset")
-                            .foregroundColor(.red)
+                        TimeLengthStepper(sliderValue: $timeBlockDuration, geo: geo)
                         Spacer()
                     }
                 }
-                .buttonStyle(.bordered)
-                Spacer()
-                Button {
-                    save()
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("Save")
-                        Spacer()
-                    }
+                .listStyle(.plain)
+                .buttonStyle(BorderlessButtonStyle())
+                .onAppear {
+                    UIDatePicker.appearance().minuteInterval = 15
+                    load()
                 }
-                .buttonStyle(.bordered)
+                HStack {
+                    Button {
+                        reset()
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Reset")
+                                .foregroundColor(.red)
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    Spacer()
+                    Button {
+                        save()
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Save")
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                }
             }
-        }
-        .navigationTitle("Time Blocks")
-        .navigationBarTitleDisplayMode(.inline)
-        .alert("Time Blocks must not overlap.", isPresented: $invalidTimes) {
-            Button("Ok") { invalidTimes = false }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert("Time Blocks must not overlap.", isPresented: $invalidTimes) {
+                Button("Ok") { invalidTimes = false }
+            }
         }
     }
     func save() {
@@ -78,6 +90,7 @@ struct PreferredTimeBlocks: View {
             vm.afternoonEndtime = afternoonEnd
             vm.eveningStartTime = eveningStart
             vm.eveningEndTime = eveningEnd
+            vm.timeBlockDuration = timeBlockDuration
             vm.refreshTasks()
             dismiss()
         }
@@ -90,6 +103,7 @@ struct PreferredTimeBlocks: View {
         afternoonEnd = vm.afternoonEndtime
         eveningStart = vm.eveningStartTime
         eveningEnd = vm.eveningEndTime
+        timeBlockDuration = 15
     }
     init(_ vm: ViewModel) {
         self.vm = vm
@@ -99,6 +113,7 @@ struct PreferredTimeBlocks: View {
         _afternoonEnd = State<Date>.init(initialValue: vm.afternoonEndtime)
         _eveningStart = State<Date>.init(initialValue: vm.eveningStartTime)
         _eveningEnd = State<Date>.init(initialValue: vm.eveningEndTime)
+        _timeBlockDuration = State<Int>.init(initialValue: vm.timeBlockDuration)
         load()
     }
     func load() {

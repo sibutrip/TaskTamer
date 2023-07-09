@@ -11,16 +11,16 @@ struct SettingsSheet: View {
     @ObservedObject var vm: ViewModel
     var body: some View {
         NavigationStack {
-            Form {
-                NavigationLink("Time Blocks") {
+//            Form {
+//                NavigationLink("Time Blocks") {
                     PreferredTimeBlocks(vm)
-                }
-//                NavigationLink("Preferred Time Blocks") {
-//                    PreferredTimeBlocks()
 //                }
-            }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
+//                NavigationLink("Preferred Time Blocks") {
+//                    TimeBlockDuration(vm)
+//                }
+//            }
+//            .navigationTitle("Settings")
+//            .navigationBarTitleDisplayMode(.inline)
         }
     }
     init(_ vm: ViewModel) {
