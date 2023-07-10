@@ -27,43 +27,41 @@ struct TimeLengthStepper: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            Button {
-                let newValue = sliderValue - 15
-                Haptic.medium()
-                withAnimation(Animation.easeInOut(duration: 0.1)) { sliderValue = newValue
+            plusMinusButton(ofType: .minus)
+                .onTapGesture {
+                    if sliderValue == 15 { return }
+                    let newValue = sliderValue - 15
+                    Haptic.medium()
+                    withAnimation(Animation.easeInOut(duration: 0.1)) { sliderValue = newValue
+                    }
                 }
-            } label: {
-                plusMinusButton(ofType: .minus)
-            }
-            .disabled(sliderValue == 15)
             Divider()
                 .padding(.trailing, scaledPadding)
             label
-                .gesture(timeSelectionGesture)
                 .frame(width: geo.size.width / 4)
             Divider()
                 .padding(.leading, scaledPadding)
-            Button {
-                Haptic.medium()
-                let newValue = sliderValue + 15
-                withAnimation(Animation.easeInOut(duration: 0.2 )) { sliderValue = newValue
+            plusMinusButton(ofType: .plus)
+                .onTapGesture {
+                    if sliderValue == 240 { return }
+                    Haptic.medium()
+                    let newValue = sliderValue + 15
+                    withAnimation(Animation.easeInOut(duration: 0.2 )) { sliderValue = newValue
+                    }
                 }
-            } label: {
-                plusMinusButton(ofType: .plus)
-            }
-            .disabled(sliderValue == 240)
+                .disabled(sliderValue == 240)
         }
         .padding(.vertical, scaledPadding * 0.5)
+        .gesture(timeSelectionGesture)
         .background {
             RoundedRectangle(cornerRadius: 5)
                 .foregroundColor(Color("StepperBackground"))
         }
-        
     }
 }
 
 extension TimeLengthStepper {
-    internal enum PlusMinusButtonType: String {
+    internal enum PlusMinusButtonType: String, Equatable {
         case plus, minus
     }
     var label: some View {
@@ -126,14 +124,17 @@ extension TimeLengthStepper {
             }
     }
     func plusMinusButton(ofType buttonType: PlusMinusButtonType) -> some View {
-        ZStack {
+        let cappedValue = buttonType == .minus ? 15 : 240
+        return ZStack {
             Text("")
                 .padding(.vertical, scaledPadding * 0.5)
                 .opacity(0.0)
             Image(systemName: buttonType.rawValue)
                 .fontWeight(.regular)
                 .frame(width: geo.size.width / 5)
+                .foregroundColor(sliderValue == cappedValue ? .gray : .blue)
         }
+        .contentShape(Rectangle())
     }
 }
 

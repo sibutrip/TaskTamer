@@ -18,7 +18,7 @@ struct SortListView: View {
     }
     @State private var newTask = ""
     @ObservedObject var vm: ViewModel
-    @FocusState private var isFocused
+    @FocusState private var isFocused: Bool
     @State var dropAction: TimeSelection = .noneSelected
     @State private var dragAction: DragTask = .init(isDragging: false, timeSelection: .noneSelected, keyboardSelection: .dismissKeyboard)
     @State private var sortDidFail: Bool = false
@@ -44,12 +44,14 @@ struct SortListView: View {
                                     Text(newTask)
                                 }
                                 .onSubmit {
-                                    //                                    (0...10).forEach { _ in
                                     addTask()
-                                    //                                    }
                                 }
                                 Button {
-                                    addTask()
+                                    if !isFocused {
+                                        isFocused = true
+                                    } else {
+                                        addTask()
+                                    }
                                 } label: {
                                     Image(systemName: "plus.circle")
                                         .foregroundColor(.accentColor)
@@ -57,14 +59,16 @@ struct SortListView: View {
                             }
                             .padding(.top,scaledPadding)
                             .padding(.horizontal)
+                            .focused($isFocused, equals: true)
                         }
                         .padding(.bottom, scaledPadding)
                         .background { Color("ListForeground") }
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
+                    .scrollDismissesKeyboard(.immediately)
                 }
                 .padding(.horizontal)
-                Spacer()
+//                Spacer()
             }
             .navigationTitle("Sort Tasks")
             .overlay {
@@ -100,6 +104,17 @@ struct SortListView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     SettingsToolbar(vm)
                 }
+            }
+            .onChange(of: isFocused) { newValue in
+                if newValue == true {
+                    withAnimation {
+                        taskDeleting = nil
+                        taskExpanded = nil
+                    }
+                }
+            }
+            .onChange(of: taskExpanded) { newValue in
+                if newValue != nil { isFocused = false }
             }
         }
     }

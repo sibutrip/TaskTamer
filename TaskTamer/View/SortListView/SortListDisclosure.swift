@@ -84,32 +84,36 @@ struct SortListDisclosure: View {
                     }
                 }
                 .animation(.default, value: taskDeleting)
-                .gesture(DragGesture()
+                .gesture(DragGesture(coordinateSpace: .global)
                     .onChanged { value in
-                        taskDeleting = task
+                        withAnimation { taskDeleting = task }
+                        print(value.translation.width)
+                        if value.translation.width + geo.size.width / 20 > 0 && !deleteModeEnabled { return }
+                        let translation = -value.translation.width - geo.size.width / 20
                         withAnimation {
                             taskExpanded = nil
-                        }
-                        if deleteModeEnabled {
-                            if value.translation.width > 0 {
-                                xOffset = (-value.translation.width) + geo.size.width / 5
+                            if deleteModeEnabled {
+                                if value.translation.width > 0 {
+                                    xOffset = (-value.translation.width) + geo.size.width / 5
+                                } else {
+                                    xOffset = (-value.translation.width + geo.size.width / 5)
+                                }
                             } else {
-                                xOffset = (-value.translation.width + geo.size.width / 5)
+                                if value.translation.width < 0 {
+                                    xOffset = abs(translation)
+                                }
                             }
-                        } else {
-                            if value.translation.width < 0 {
-                                xOffset = abs(value.translation.width)
+                            if xOffset > geo.size.width / 2 {
+                                fullSwipeDelete = true
+                            } else {
+                                fullSwipeDelete = false
                             }
-                        }
-                        if xOffset > geo.size.width / 2 {
-                            withAnimation { fullSwipeDelete = true }
-                        } else {
-                            withAnimation { fullSwipeDelete = false }
                         }
                     }
                     .onEnded { value in
                         if fullSwipeDelete {
                             delete()
+                            taskDeleting = nil
                             return
                         }
                         withAnimation {
