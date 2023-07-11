@@ -35,8 +35,10 @@ struct SortListView: View {
                 GeometryReader { geo in
                     ScrollView {
                         LazyVStack(spacing: 0) {
-                            ForEach(0..<vm.unsortedTasks.count, id: \.self) { index in
-                                SortListDisclosure(vm, index, $taskExpanded, geo, $taskDeleting)
+                            ForEach(vm.unsortedTasks) { task in
+                                SortListDisclosure(vm, task, $taskExpanded, geo, $taskDeleting)
+                                Divider()
+                                    .padding(.top, scaledPadding)
                                     .background { Color("ListForeground") }
                             }
                             HStack {
@@ -68,7 +70,6 @@ struct SortListView: View {
                     .scrollDismissesKeyboard(.immediately)
                 }
                 .padding(.horizontal)
-//                Spacer()
             }
             .navigationTitle("Sort Tasks")
             .overlay {
@@ -83,7 +84,6 @@ struct SortListView: View {
                 HStack {
                     Button("No thanks") { vm.noPermission = false }
                     Button("Take me there") {
-//                        vm.noPermission = false
                         Task {
                             if let url = URL(string: UIApplication.openSettingsURLString) {
                                 // Ask the system to open that URL.
