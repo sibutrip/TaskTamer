@@ -22,7 +22,6 @@
 		745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745376B82A4B1FF2000382A0 /* SortSwipeView.swift */; };
 		749281FE2A5A36B400208DBA /* TimeBlockDuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749281FD2A5A36B400208DBA /* TimeBlockDuration.swift */; };
 		749282002A5AF60E00208DBA /* Haptic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749281FF2A5AF60E00208DBA /* Haptic.swift */; };
-		7493AEDC2A5DB07D005A16E4 /* SortList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7493AEDB2A5DB07D005A16E4 /* SortList.swift */; };
 		74EFBDB92A49C191002C8388 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD8F2A49C191002C8388 /* ViewModel.swift */; };
 		74EFBDBA2A49C191002C8388 /* ADHDBrainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */; };
 		74EFBDBB2A49C191002C8388 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74EFBD922A49C191002C8388 /* Assets.xcassets */; };
@@ -73,7 +72,6 @@
 		748DAE3C29FD930D003A3B06 /* TaskTamer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskTamer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		749281FD2A5A36B400208DBA /* TimeBlockDuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeBlockDuration.swift; sourceTree = "<group>"; };
 		749281FF2A5AF60E00208DBA /* Haptic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptic.swift; sourceTree = "<group>"; };
-		7493AEDB2A5DB07D005A16E4 /* SortList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortList.swift; sourceTree = "<group>"; };
 		74EFBD8F2A49C191002C8388 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		74EFBD902A49C191002C8388 /* ADHDBrainApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ADHDBrainApp.swift; sourceTree = "<group>"; };
 		74EFBD922A49C191002C8388 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -218,7 +216,6 @@
 			children = (
 				74EFBD9C2A49C191002C8388 /* SortListView.swift */,
 				74EFBD9D2A49C191002C8388 /* SortListDisclosure.swift */,
-				7493AEDB2A5DB07D005A16E4 /* SortList.swift */,
 				74EFBD9B2A49C191002C8388 /* DisclosureRow.swift */,
 				744C3B002A58CCA100CE124E /* TimeLengthStepper.swift */,
 				74EFBDAD2A49C191002C8388 /* Unsort.swift */,
@@ -398,7 +395,6 @@
 				74EFBDD22A49C191002C8388 /* Saving.swift in Sources */,
 				74EFBDBE2A49C191002C8388 /* SortStatus.swift in Sources */,
 				74EFBDCE2A49C191002C8388 /* Unsort.swift in Sources */,
-				7493AEDC2A5DB07D005A16E4 /* SortList.swift in Sources */,
 				744C3AEA2A575C4C00CE124E /* CompleteTaskSheet.swift in Sources */,
 				74EFBDC32A49C191002C8388 /* TaskRow.swift in Sources */,
 				74EFBDCD2A49C191002C8388 /* SwipeGesture.swift in Sources */,
