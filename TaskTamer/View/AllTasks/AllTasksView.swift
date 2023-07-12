@@ -8,12 +8,9 @@
 import SwiftUI
 
 struct AllTasksView: View {
-    //    @Environment(\.defaultMinListRowHeight) var minRow
-    @ScaledMetric(relativeTo: .body) var scaledPadding: CGFloat = 10
+//    @Environment(\.defaultMinListRowHeight) var minRow
     @ObservedObject var vm: ViewModel
     @Environment(\.scenePhase) private var scenePhase
-    @State var taskExpanded: TaskItem? = nil
-    @State var taskDeleting: TaskItem? = nil
     
     var sortedTaskTimes: [Dictionary<String, [TaskItem]>.Element] {
         var taskTimes: [String:[TaskItem]] = [:]
@@ -79,52 +76,22 @@ struct AllTasksView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color("ListBackground")
-                    .ignoresSafeArea()
-                GeometryReader { geo in
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            if vm.tasks.isEmpty {
-                                Text("You have no tasks!")
-                            } else {
-                                ForEach(0..<sortedTaskTimes.count, id: \.self) { index in
-                                    HStack(spacing: 0) {
-                                        Text(sortedTaskTimes[index].key.uppercased())
-                                            .foregroundColor(.secondary)
-                                            .font(.caption)
-                                        Spacer()
+            Group {
+                if vm.tasks.isEmpty {
+                    Text("You have no tasks!")
+                } else {
+                    List(0..<sortedTaskTimes.count, id: \.self) { index in
+                        Section(sortedTaskTimes[index].key) {
+                            ForEach(sortedTaskTimes[index].value) { task in
+                                AllTasksRowView(task, vm)
+                                    .onTapGesture {
+                                        Task { await vm.openCalendar(for: task) }
                                     }
-                                    .padding(scaledPadding * 0.5)
-                                    .padding(.top, scaledPadding * 0.5)
-                                    .padding(.leading)
-                                    LazyVStack(spacing: 0) {
-                                        ForEach(0..<sortedTaskTimes[index].value.count, id: \.self) { sortedIndex in
-                                            let task = sortedTaskTimes[index].value[sortedIndex]
-                                            Group {
-                                                if sortedTaskTimes[index].key == "Previous" {
-                                                    SortList(vm, task, geo, $taskDeleting)
-                                                } else {
-                                                    SortListDisclosure(vm, task, $taskExpanded, geo, $taskDeleting)
-                                                }
-                                            }
-                                            .background { Color("ListForeground") }
-                                            if (sortedIndex + 1) != (sortedTaskTimes[index].value.count) {
-                                                Divider()
-                                                    .padding(.top, scaledPadding)
-                                            }
-                                        }
-                                    }
-                                    .padding(.bottom, scaledPadding)
-                                    .background { Color("ListForeground") }
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                }
                             }
                         }
+                        .transition(.slide)
                     }
-                    .scrollDismissesKeyboard(.immediately)
                 }
-                .padding(.horizontal)
             }
             .navigationTitle("All Tasks")
             .onChange(of: scenePhase) { newValue in

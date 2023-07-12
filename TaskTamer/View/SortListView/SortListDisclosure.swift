@@ -52,6 +52,8 @@ struct SortListDisclosure: View {
                     .padding(.horizontal)
                     .contentShape(Rectangle())
                     .offset(x: min(-xOffset,0))
+                    Divider()
+                        .padding(.leading)
                 }
                 .padding(.top, scaledPadding)
                 .overlay {
@@ -149,6 +151,7 @@ struct SortListDisclosure: View {
                     }
                     TimeLengthStepper(sliderValue: $timeBlockDuration, geo: geo)
                         .padding(.vertical,scaledPadding)
+                    Divider()
                 }
                 .padding(.horizontal, scaledPadding * 3)
                 .padding(.top, scaledPadding)
@@ -170,10 +173,9 @@ struct SortListDisclosure: View {
         }
     }
     
-    init(_ vm: ViewModel, _ task: TaskItem, _ taskExpanded: Binding<TaskItem?>, _ geo: GeometryProxy, _ taskDeleting: Binding<TaskItem?>) {
+    init(_ vm: ViewModel, _ index: Int, _ taskExpanded: Binding<TaskItem?>, _ geo: GeometryProxy, _ taskDeleting: Binding<TaskItem?>) {
         self.vm = vm
-//        self.task = vm.unsortedTasks[index]
-        self.task = task
+        self.task = vm.unsortedTasks[index]
         self.geo = geo
         _taskExpanded = taskExpanded
         _taskDeleting = taskDeleting
