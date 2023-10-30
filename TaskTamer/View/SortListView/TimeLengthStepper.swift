@@ -29,8 +29,15 @@ struct TimeLengthStepper: View {
         HStack(spacing: 0) {
             plusMinusButton(ofType: .minus)
                 .onTapGesture {
-                    if sliderValue == 15 { return }
-                    let newValue = sliderValue - 15
+                    if sliderValue == 5 { return }
+                    let newValue: Int
+                    if sliderValue == 10 {
+                        newValue = 5
+                    } else if sliderValue == 15 {
+                        newValue = 10
+                    } else {
+                        newValue = sliderValue - 15
+                    }
                     Haptic.medium()
                     withAnimation(Animation.easeInOut(duration: 0.1)) { sliderValue = newValue
                     }
@@ -44,8 +51,15 @@ struct TimeLengthStepper: View {
             plusMinusButton(ofType: .plus)
                 .onTapGesture {
                     if sliderValue == 240 { return }
+                    let newValue: Int
+                    if sliderValue == 5 {
+                        newValue = 10
+                    } else if sliderValue == 10 {
+                        newValue = 15
+                    } else {
+                        newValue = sliderValue + 15
+                    }
                     Haptic.medium()
-                    let newValue = sliderValue + 15
                     withAnimation(Animation.easeInOut(duration: 0.2 )) { sliderValue = newValue
                     }
                 }
@@ -101,13 +115,21 @@ extension TimeLengthStepper {
                 let location = value.translation.width - CGFloat(numberOfDragTicks) * increments
                 var newSliderValue = sliderValue
                 if location > increments {
-                    newSliderValue += 15
+                    if sliderValue == 5 || sliderValue == 10 {
+                        newSliderValue += 5
+                    } else {
+                        newSliderValue += 15
+                    }
                     numberOfDragTicks += 1
                     if newSliderValue < 240 && newSliderValue > 0 {
                         haptic.impactOccurred()
                     }
                 } else if location < -increments {
-                    newSliderValue -= 15
+                    if sliderValue == 10 || sliderValue == 15 {
+                        newSliderValue -= 5
+                    } else {
+                        newSliderValue -= 15
+                    }
                     numberOfDragTicks -= 1
                     if newSliderValue < 240 && newSliderValue > 0 {
                         haptic.impactOccurred()
@@ -124,7 +146,7 @@ extension TimeLengthStepper {
             }
     }
     func plusMinusButton(ofType buttonType: PlusMinusButtonType) -> some View {
-        let cappedValue = buttonType == .minus ? 15 : 240
+        let cappedValue = buttonType == .minus ? 5 : 240
         return ZStack {
             Text("")
                 .padding(.vertical, scaledPadding * 0.5)
