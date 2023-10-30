@@ -12,9 +12,9 @@ import SwiftUI
 @MainActor
 class ViewModel: ObservableObject {
     
+    @AppStorage("timeBlockDuration") var timeBlockDuration = 15
     @Published var showingPreviousTaskSheet = false
     @Published var showingSettingsSheet = false
-    @AppStorage("timeBlockDuration") var timeBlockDuration = 15
 
     @Published var scheduleFull = false
     @Published var noPermission = false
@@ -27,8 +27,8 @@ class ViewModel: ObservableObject {
     @TimeBlock("eveningStart", hour: 17, minute: 0) var eveningStartTime
     @TimeBlock("eveningEnd", hour: 21, minute: 0) var eveningEndTime
     
-    
     let eventService: EventService
+    
     @Saving var tasks: [TaskItem] {
         didSet {
             objectWillChange.send()
@@ -85,7 +85,6 @@ class ViewModel: ObservableObject {
         do {
             var task = task
             let duration = Double(duration * 60)
-//            let duration: TimeInterval = 900 // 15 mins
             try await task.sort(duration: duration, at: time, within: tasks, vm: self, isRescheduling: isRescheduling)
             var tasks = self.tasks
             tasks = tasks.filter {

@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+extension SubmitLabel {
+    
+}
+
 struct SortListView: View {
     
     @ScaledMetric(relativeTo: .body) var scaledPadding: CGFloat = 10
@@ -25,7 +29,6 @@ struct SortListView: View {
     @State private var taskExpanded: TaskItem?
     @State private var taskDeleting: TaskItem?
     @State private var disclosure: Bool = false
-    
     
     var body: some View {
         NavigationStack {

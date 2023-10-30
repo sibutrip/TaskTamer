@@ -56,6 +56,7 @@ struct PreviousTaskSheet: View {
                             }
                             dismiss()
                         }
+                        .disabled(selectedTasks.isEmpty)
                     }
                 }
             }
