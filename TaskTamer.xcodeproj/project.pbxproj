@@ -201,12 +201,12 @@
 			children = (
 				74EFBDB32A49C191002C8388 /* ContentView.swift */,
 				745376B82A4B1FF2000382A0 /* SortSwipeView.swift */,
-				74EFBD9E2A49C191002C8388 /* SortDragView */,
 				74EFBD9A2A49C191002C8388 /* SortListView */,
 				74EFBDD82A49C2D6002C8388 /* AllTasks */,
 				744C3AED2A57900D00CE124E /* CompleteTaskSheet */,
 				74EFBDAE2A49C191002C8388 /* Color+Extension.swift */,
 				744C3AF92A5886E700CE124E /* Settings */,
+				74EFBD9E2A49C191002C8388 /* SortDragView */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -219,6 +219,7 @@
 				74EFBD9B2A49C191002C8388 /* DisclosureRow.swift */,
 				744C3B002A58CCA100CE124E /* TimeLengthStepper.swift */,
 				74EFBDAD2A49C191002C8388 /* Unsort.swift */,
+				74EFBDA32A49C191002C8388 /* Time.swift */,
 			);
 			path = SortListView;
 			sourceTree = "<group>";
@@ -241,7 +242,6 @@
 			children = (
 				74EFBDA12A49C191002C8388 /* SkipTab.swift */,
 				74EFBDA22A49C191002C8388 /* DayOverlay.swift */,
-				74EFBDA32A49C191002C8388 /* Time.swift */,
 				74EFBDA42A49C191002C8388 /* SortTab.swift */,
 			);
 			path = SortOverlays;
