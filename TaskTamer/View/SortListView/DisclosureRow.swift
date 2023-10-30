@@ -13,33 +13,63 @@ struct DisclosureRow: View {
     @ObservedObject var vm: ViewModel
     @Binding var taskExpanded: TaskItem?
     @Binding var timeBlockDuration: Int
+    func displayedTimes(for time: TimeSelection) -> [Date] {
+        let (startTime, endTime) = switch time {
+        case .morning:
+            (vm.morningStartTime, vm.morningEndTime)
+        case .afternoon:
+            (vm.afternoonStartTime, vm.afternoonEndtime)
+        case .evening:
+            (vm.eveningStartTime, vm.eveningEndTime)
+        default:
+            (Date(),Date())
+        }
+        var timeCounter = startTime
+        var displayedTimes = [Date]()
+        while timeCounter < endTime.addingTimeInterval(TimeInterval(timeBlockDuration * 60)) {
+            displayedTimes.append(timeCounter)
+            timeCounter = timeCounter.addingTimeInterval(TimeInterval(timeBlockDuration * 60))
+        }
+        return displayedTimes
+    }
     
     let times: [Time]
     let rowTitle: String
     var body: some View {
-        VStack {
-            HStack {
-                ForEach(times) { skip in
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                ForEach(times) { time in
                     Button {
                         Haptic.medium()
                         Task {
-                            _ = await vm.sortTask(task, skip.timeSelection, duration: timeBlockDuration)
+                            _ = await vm.sortTask(task, time.timeSelection, duration: timeBlockDuration)
                             taskExpanded = nil
                         }
                     } label: {
-                        if times == Time.days {
-                            Label(skip.name, systemImage: skip.image)
-                                .foregroundColor(skip.color)
-                                .labelStyle(.iconOnly)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 3)
-                        } else {
-                            Label(skip.name, image: skip.image)
-                                .foregroundColor(skip.color)
-                                .labelStyle(.iconOnly)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 3)
-                        }
+                            if times == Time.days {
+                                Label(time.name, systemImage: time.image)
+                                    .foregroundColor(time.color)
+                                    .labelStyle(.iconOnly)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 8)
+                                    .contentShape(Rectangle())
+                                    .contextMenu {
+                                        ForEach(displayedTimes(for: time.timeSelection), id: \.self) { date in
+                                            Button(date.formatted(date: .omitted, time: .shortened)) {
+                                                Task {
+                                                    await vm.schedule(task: task, at: date, in: time.timeSelection, with: TimeInterval(timeBlockDuration * 60))
+                                                }
+                                            }
+                                        }
+                                    }
+                            } else {
+                                Label(time.name, image: time.image)
+                                    .foregroundColor(time.color)
+                                    .labelStyle(.iconOnly)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 8)
+                                    .contentShape(Rectangle())
+                            }
                     }
                     .buttonStyle(.plain)
                 }

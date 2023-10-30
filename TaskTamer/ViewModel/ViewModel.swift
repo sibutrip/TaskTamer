@@ -92,7 +92,6 @@ class ViewModel: ObservableObject {
             }
             tasks.append(task)
             self.tasks = tasks
-            DirectoryService.writeModelToDisk(tasks)
             return true
         } catch {
             let eventServiceError = error as? EventServiceError
@@ -122,7 +121,6 @@ class ViewModel: ObservableObject {
         task.startDate = nil
         task.sortStatus = .unsorted
         tasks.append(task)
-        DirectoryService.writeModelToDisk(tasks)
         self.tasks = tasks
     }
     
@@ -135,8 +133,31 @@ class ViewModel: ObservableObject {
         tasks = tasks.filter {
             $0.id != task.id
         }
-        DirectoryService.writeModelToDisk(tasks)
         self.tasks = tasks
+    }
+    
+    public func schedule(task: TaskItem, at time: Date, in timeSelection: TimeSelection, with duration: TimeInterval) async {
+        do {
+            var task = task
+            let specifiedDate: (Date,Date) = (time,time.addingTimeInterval(duration))
+            try await task.sort(duration: duration, at: timeSelection, within: tasks, vm: self, at: specifiedDate)
+            var tasks = self.tasks
+            tasks = tasks.filter {
+                $0.id != task.id
+            }
+            tasks.append(task)
+            self.tasks = tasks
+        } catch {
+            let eventServiceError = error as? EventServiceError
+            switch eventServiceError {
+            case .noPermission:
+                noPermission = true
+            case .scheduleFull:
+                scheduleFull = true
+            case .none:
+                unknownError = true
+            }
+        }
     }
     
     public func rescheduleTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900) async {
