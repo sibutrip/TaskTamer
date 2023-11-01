@@ -86,7 +86,6 @@ struct SortListView: View {
                 HStack {
                     Button("No thanks") { vm.noPermission = false }
                     Button("Take me there") {
-//                        vm.noPermission = false
                         Task {
                             if let url = URL(string: UIApplication.openSettingsURLString) {
                                 // Ask the system to open that URL.

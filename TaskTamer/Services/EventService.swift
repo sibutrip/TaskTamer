@@ -16,6 +16,22 @@ class EventService {
     
     var rescheduledEvent: EKEvent?
     
+    public func userCalendars() -> [EKCalendar] {
+        return eventStore.calendars(for: .event)
+    }
+    
+    private func reschedule(_ task: Scheduleable, in events: inout [EKEvent]) async throws {
+        guard let eventID = task.eventID else { return }
+        let fullPermission = await requestCalendarPermission(for: .full)
+        if fullPermission {
+            let eventToReschedule = eventStore.event(withIdentifier: eventID)
+            self.rescheduledEvent = eventToReschedule
+            events = events.filter { $0.eventIdentifier != task.eventID }
+        } else {
+            throw EventServiceError.noPermission
+        }
+    }
+    
     public func removeRescheduledEvent() {
         do {
             guard let rescheduledEvent = rescheduledEvent else  {return }
@@ -26,22 +42,22 @@ class EventService {
         }
     }
     
-    public func deleteEvent(for task: inout TaskItem) throws {
-        if task.eventID == "" { return }
-        let event = eventStore.event(withIdentifier: task.eventID)
+    public func deleteEvent(for task: Scheduleable) throws -> Bool {
+        guard let eventID = task.eventID else { return false }
+        let event = eventStore.event(withIdentifier: eventID)
         if let event = event {
-//            lastDeletedEvent = event
             try eventStore.remove(event, span: .thisEvent)
-            task.eventID = ""
+            return true
         } else {
             print("no event!")
+            return false
         }
     }
     
-    public func updateTaskTimes(for tasks: [TaskItem]) -> [TaskItem] {
+    public func updateTaskTimes(for tasks: [Scheduleable]) -> [Scheduleable] {
         return tasks.map { task in
             var task = task
-            guard let event = eventStore.event(withIdentifier: task.eventID) else { return task }
+            guard let eventID = task.eventID, let event = eventStore.event(withIdentifier: eventID) else { return task }
             let startDate = event.startDate
             let endDate = event.endDate
             task.startDate = startDate
@@ -50,41 +66,47 @@ class EventService {
         }
     }
     
-    public func scheduleEvent(for task: inout TaskItem) async throws {
-        guard let accessGranted = try? await eventStore.requestAccess(to: .event) else {
-            throw EventServiceError.noPermission
-        }
+    public func scheduleEvent(for task: Scheduleable) async throws -> String? {
+        let accessGranted = await requestCalendarPermission(for: .write)
         if accessGranted {
-            guard let startDate = task.startDate, let endDate = task.endDate else { return }
+            guard let startDate = task.startDate, let endDate = task.endDate else { return nil }
             let event = EKEvent(eventStore: eventStore)
-            event.title = task.name
+            event.title = task.eventTitle
             event.startDate = startDate
             let duration = Date.distance(startDate)(to: endDate)
             event.endDate = startDate.addingTimeInterval(duration)
             event.calendar = eventStore.defaultCalendarForNewEvents
             event.addAlarm(.init(absoluteDate: startDate))
             try eventStore.save(event, span: .thisEvent)
-            task.eventID = event.eventIdentifier
+//            task.eventID = event.eventIdentifier
+            return event.eventIdentifier
         } else { throw EventServiceError.noPermission }
     }
     
-    public func selectDate(duration: TimeInterval, from timeSelection: TimeSelection, within tasks: [TaskItem], vm: ViewModel, rescheduling task: TaskItem? = nil) async throws -> (Date,Date)? {
+    public func selectDate(from startDate: Date, to endDate: Date, with duration: TimeInterval, rescheduling task: Scheduleable? = nil) async throws -> (Date,Date)? {
         if firstTimeAddingEvent {
-            guard await requestCalendarPermission() else {
+            guard await requestCalendarPermission(for: .write) else {
                 throw EventServiceError.noPermission
             }
             firstTimeAddingEvent = false
         }
-        let availableDates = try await fetchAvailableDates(for: timeSelection, within: tasks, vm: vm, rescheduling: task)
-            .flatMap { (startTime, endTime) in
+        
+        guard let calendar = eventStore.defaultCalendarForNewEvents else { fatalError("no default cal found. let user select a calendar.")}
+        let predicate = eventStore.predicateForEvents(withStart: DateComponents.midnight.date!, end: endDate, calendars: [calendar])
+        var events = eventStore.events(matching: predicate)
+            .filter { $0.endDate <= endDate && $0.endDate > startDate }
+        if let task {
+            try await reschedule(task, in: &events)
+        }
+        let freeTime = freeTime(in: events, from: startDate, to: endDate)
+        let availableDates = freeTime
+                .flatMap { (startTime, endTime) in
                 let distance = startTime.distance(to: endTime)
                 let numberOfAvailableSlots = Int(distance / duration) // rounds down
                 return (0..<numberOfAvailableSlots).map { index in
                     return startTime.addingTimeInterval(TimeInterval(index) * duration)
                 }
             }
-//        availableDates.forEach { print($0.description(with: .autoupdatingCurrent)) }
-        
         let startDate = availableDates.randomElement()
         let endDate = startDate?.addingTimeInterval(duration)
         
@@ -92,66 +114,49 @@ class EventService {
         return (startDate,endDate)
     }
     
-    /// returns [(start date, end date)] for free times in given TimeSelection
-    @MainActor private func fetchAvailableDates(for timeSelection: TimeSelection, within tasks: [TaskItem], vm: ViewModel, rescheduling task: TaskItem? = nil) throws -> [(Date,Date)] {
-        var startDate: Date
-        var endDate: Date
-        var midnight = DateComponents.midnight.date!
-        switch timeSelection {
-        case .morning:
-            startDate = vm.morningStartTime
-            endDate = vm.morningEndTime
-        case .afternoon:
-            startDate = vm.afternoonStartTime
-            endDate = vm.afternoonEndtime
-        case .evening:
-            startDate = vm.eveningStartTime
-            endDate = vm.eveningEndTime
-        default:
-            return []
-        }
-        
-        if Date() > endDate {
-            startDate = startDate.addingTimeInterval(86400)
-            endDate = endDate.addingTimeInterval(86400)
-            midnight = midnight.addingTimeInterval(86400)
-        }
-        guard let calendar = eventStore.defaultCalendarForNewEvents else { throw EventServiceError.noPermission }
-        let predicate = eventStore.predicateForEvents(withStart: midnight, end: endDate, calendars: [calendar])
-        var events = eventStore.events(matching: predicate)
-            .filter { $0.endDate <= endDate && $0.endDate > startDate }
-        if task != nil {
-            let eventToReschedule = eventStore.event(withIdentifier: task!.eventID)
-            self.rescheduledEvent = eventToReschedule
-            events = events.filter { $0.eventIdentifier != task!.eventID }
-        }
-        var freeTime: [(Date,Date)] = (0..<events.count).map { index in
-            let event = events[index]
+    private func freeTime(in events: [EKEvent], from startDate: Date, to endDate: Date) -> [(startTime: Date, endTime: Date)] {
+        var freeTime: [(Date,Date)] = events.enumerated().compactMap { index, event in
+            guard let eventStartTime = event.startDate, let eventEndTime = event.endDate else { return nil }
             if index == 0 {
-                return (startDate,event.startDate)
+                return (startDate,eventStartTime)
             } else if index == (events.count - 1) {
-                return (event.endDate,endDate)
+                return (eventEndTime,endDate)
             }
             let lastEvent = events[index - 1]
             return (lastEvent.endDate, event.startDate)
         }
         if freeTime.count == 1 { freeTime.append((events[0].endDate, endDate)) }
         if freeTime.isEmpty { freeTime.append((startDate,endDate)) }
-        freeTime = freeTime.map { (startDate,endDate) in
+        return freeTime.map { (startDate,endDate) in
             if startDate < Date.nearestQuarterHour {
                 return (Date.nearestQuarterHour,endDate)
             }
             return (startDate,endDate)
         }
         .filter { $0.0 != $0.1 }
-        .filter { $0.0 < $0.1}
-        return freeTime
+        .filter { $0.0 < $0.1 }
     }
     
-    private func requestCalendarPermission() async -> Bool {
+    enum CalendarPermissionType { case write, full }
+    
+    private func requestCalendarPermission(for calendarPermissionType: CalendarPermissionType) async -> Bool {
         do {
             let store = EKEventStore.init()
-            let result = try await store.requestAccess(to: .event)
+            let result: Bool
+            switch calendarPermissionType {
+            case .write:
+                if #available(iOS 17.0, *) {
+                    result = try await store.requestWriteOnlyAccessToEvents()
+                } else {
+                    result = try await store.requestAccess(to: .event)
+                }
+            case .full:
+                if #available(iOS 17.0, *) {
+                    result = try await store.requestFullAccessToEvents()
+                } else {
+                    result = try await store.requestAccess(to: .event)
+                }
+            }
             return result
         } catch {
             return false

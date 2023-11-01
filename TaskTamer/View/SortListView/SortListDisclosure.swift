@@ -57,77 +57,10 @@ struct SortListDisclosure: View {
                 }
                 .padding(.top, scaledPadding)
                 .overlay {
-                    HStack {
-                        Color.clear
-                        Button {
-                            if deleteModeEnabled {
-                                delete()
-                            }
-                        } label: {
-                            Rectangle()
-                                .foregroundColor(.red)
-                                .frame(width: max(xOffset, 0))
-                                .overlay {
-                                    HStack {
-                                        Text("Delete")
-                                            .foregroundColor(.white)
-                                            .lineLimit(1)
-                                            .minimumScaleFactor(0.1)
-                                            .padding(fullSwipeDelete ? scaledPadding : 0)
-                                        
-                                        if fullSwipeDelete {
-                                            Spacer()
-                                        }
-                                    }
-                                }
-                        }
-                    }
+                    deleteSwipe
                 }
-                .animation(.default, value: taskDeleting)
-                .gesture(DragGesture(coordinateSpace: .global)
-                    .onChanged { value in
-                        withAnimation { taskDeleting = task }
-                        print(value.translation.width)
-                        if value.translation.width + geo.size.width / 20 > 0 && !deleteModeEnabled { return }
-                        let translation = -value.translation.width - geo.size.width / 20
-                        withAnimation {
-                            taskExpanded = nil
-                            if deleteModeEnabled {
-                                if value.translation.width > 0 {
-                                    xOffset = (-value.translation.width) + geo.size.width / 5
-                                } else {
-                                    xOffset = (-value.translation.width + geo.size.width / 5)
-                                }
-                            } else {
-                                if value.translation.width < 0 {
-                                    xOffset = abs(translation)
-                                }
-                            }
-                            if xOffset > geo.size.width / 2 {
-                                fullSwipeDelete = true
-                            } else {
-                                fullSwipeDelete = false
-                            }
-                        }
-                    }
-                    .onEnded { value in
-                        if fullSwipeDelete {
-                            delete()
-                            taskDeleting = nil
-                            return
-                        }
-                        withAnimation {
-                            if -value.predictedEndTranslation.width > geo.size.width / 5 {
-                                xOffset = geo.size.width / 5
-                                deleteModeEnabled = true
-                                return
-                            }
-                            xOffset = .zero
-                            deleteModeEnabled = false
-                            taskDeleting = nil
-                        }
-                    }
-                )
+                .gesture(deleteGesture)
+                .animation(.default.speed(4), value: taskDeleting)
             }
             .buttonStyle(.plain)
             .onChange(of: taskDeleting) { newValue in
@@ -142,24 +75,101 @@ struct SortListDisclosure: View {
             }
             
             if taskExpanded == task {
-                VStack {
-                    let layout = dynamicTypeSize > .xxLarge ? AnyLayout(VStackLayout(alignment: .center)) : AnyLayout(HStackLayout(alignment: .center))
-                    layout {
-                        DisclosureRow(for: Time.skips, vm, task, $taskExpanded, duration: $timeBlockDuration)
-                        Spacer()
-                        DisclosureRow(for: Time.days, vm, task, $taskExpanded, duration: $timeBlockDuration)
-                    }
-                    TimeLengthStepper(sliderValue: $timeBlockDuration, geo: geo)
-                        .padding(.vertical,scaledPadding)
-                    Divider()
-                }
-                .padding(.horizontal, scaledPadding * 3)
-                .padding(.top, scaledPadding)
-                .scaleEffect(taskExpanded == task ? 1 : 0.1)
-                .animation(.default, value: taskExpanded)
+                disclosureDetail
             }
         }
         .scaleEffect(y: yFrame)
+    }
+    
+    var disclosureDetail: some View {
+        VStack {
+            let layout = dynamicTypeSize > .xxLarge ? AnyLayout(VStackLayout(alignment: .center)) : AnyLayout(HStackLayout(alignment: .center))
+            layout {
+                DisclosureRow(for: Time.skips, vm, task, $taskExpanded, duration: $timeBlockDuration)
+                Spacer()
+                DisclosureRow(for: Time.days, vm, task, $taskExpanded, duration: $timeBlockDuration)
+            }
+            TimeLengthStepper(sliderValue: $timeBlockDuration, geo: geo)
+                .padding(.vertical,scaledPadding)
+            Divider()
+        }
+        .padding(.horizontal, scaledPadding * 3)
+        .padding(.top, scaledPadding)
+        .scaleEffect(taskExpanded == task ? 1 : 0.1)
+        .animation(.default, value: taskExpanded)
+    }
+    
+    var deleteSwipe: some View {
+        HStack {
+            Color.clear
+            Button {
+                if deleteModeEnabled {
+                    delete()
+                }
+            } label: {
+                Rectangle()
+                    .foregroundColor(.red)
+                    .frame(width: max(xOffset, 0))
+                    .overlay {
+                        HStack {
+                            Text("Delete")
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.1)
+                                .padding(fullSwipeDelete ? scaledPadding : 0)
+                            
+                            if fullSwipeDelete {
+                                Spacer()
+                            }
+                        }
+                    }
+            }
+        }
+    }
+    var deleteGesture: some Gesture {
+        DragGesture(coordinateSpace: .global)
+            .onChanged { value in
+                withAnimation { taskDeleting = task }
+                print(value.translation.width)
+                if value.translation.width + geo.size.width / 20 > 0 && !deleteModeEnabled { return }
+                let translation = -value.translation.width - geo.size.width / 20
+                withAnimation {
+                    taskExpanded = nil
+                    if deleteModeEnabled {
+                        if value.translation.width > 0 {
+                            xOffset = (-value.translation.width) + geo.size.width / 5
+                        } else {
+                            xOffset = (-value.translation.width + geo.size.width / 5)
+                        }
+                    } else {
+                        if value.translation.width < 0 {
+                            xOffset = abs(translation)
+                        }
+                    }
+                    if xOffset > geo.size.width / 2 {
+                        fullSwipeDelete = true
+                    } else {
+                        fullSwipeDelete = false
+                    }
+                }
+            }
+            .onEnded { value in
+                if fullSwipeDelete {
+                    delete()
+                    taskDeleting = nil
+                    return
+                }
+                withAnimation {
+                    if -value.predictedEndTranslation.width > geo.size.width / 5 {
+                        xOffset = geo.size.width / 5
+                        deleteModeEnabled = true
+                        return
+                    }
+                    xOffset = .zero
+                    deleteModeEnabled = false
+                    taskDeleting = nil
+                }
+            }
     }
     
     func delete() {

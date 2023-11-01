@@ -112,7 +112,13 @@ class ViewModel: ObservableObject {
         var tasks = self.tasks
         if let _ = task.startDate {
             if task.sortStatus.sortName != "Skipped"  {
-                try? eventService.deleteEvent(for: &task)
+                do {
+                    if try eventService.deleteEvent(for: task) {
+                        task.eventID = ""
+                    }
+                } catch {
+                    print("could not delete event for unknown reason")
+                }
             }
         }
         tasks = tasks.filter {
@@ -128,7 +134,13 @@ class ViewModel: ObservableObject {
         var task = task
         var tasks = self.tasks
         if let _ = task.startDate {
-            try? eventService.deleteEvent(for: &task)
+            do {
+                if try eventService.deleteEvent(for: task) {
+                    task.eventID = ""
+                }
+            } catch {
+                print("could not delete event for unknown reason")
+            }
         }
         tasks = tasks.filter {
             $0.id != task.id
@@ -136,11 +148,29 @@ class ViewModel: ObservableObject {
         self.tasks = tasks
     }
     
-    public func schedule(task: TaskItem, at time: Date, in timeSelection: TimeSelection, with duration: TimeInterval) async {
+    /// Schedules a task at a start time with a given duration
+    /// - Parameter task: TaskItem to schedule
+    /// - Parameter time: the start time of the task
+    /// - Parameter timeSelection: TimeSelection to schedule the event within
+    /// - Parameter duration: Duration of task from start to end
+    public func schedule(task: TaskItem, at time: Date? = nil, within timeSelection: TimeSelection, with duration: TimeInterval) async {
         do {
             var task = task
-            let specifiedDate: (Date,Date) = (time,time.addingTimeInterval(duration))
-            try await task.sort(duration: duration, at: timeSelection, within: tasks, vm: self, at: specifiedDate)
+            
+            let scheduledDate: (startDate: Date, endDate: Date)?
+            if let time {
+                var specifiedTimes = (startDate: time,endDate: time.addingTimeInterval(duration))
+                specifiedTimes.startDate = Calendar.autoupdatingCurrent.date(byAdding: .day, value: 1, to: specifiedTimes.startDate) ?? specifiedTimes.startDate
+                specifiedTimes.endDate = Calendar.autoupdatingCurrent.date(byAdding: .day, value: 1, to: specifiedTimes.endDate) ?? specifiedTimes.endDate
+                scheduledDate = specifiedTimes
+            } else {
+                scheduledDate = try await randomValidDate(in: timeSelection, with: duration)
+            }
+            guard let scheduledDate else {
+                throw EventServiceError.unknown
+            }
+            
+            try await task.sort(from: scheduledDate.startDate, to: scheduledDate.endDate, at: timeSelection)
             var tasks = self.tasks
             tasks = tasks.filter {
                 $0.id != task.id
@@ -154,6 +184,8 @@ class ViewModel: ObservableObject {
                 noPermission = true
             case .scheduleFull:
                 scheduleFull = true
+            case .unknown:
+                fatalError("an unknown issue occured")
             case .none:
                 unknownError = true
             }
@@ -162,7 +194,6 @@ class ViewModel: ObservableObject {
     
     public func rescheduleTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900) async {
         if await sortTask(task, time, duration: duration, isRescheduling: true) {
-            
             eventService.removeRescheduledEvent()
         }
     }
@@ -182,6 +213,29 @@ class ViewModel: ObservableObject {
             return
         }
         await UIApplication.shared.open(url)
+    }
+    
+    func randomValidDate(in timeSelection: TimeSelection, with duration: TimeInterval, rescheduling task: Scheduleable? = nil) async throws -> (startDate: Date,endDate: Date)? {
+        var startDate: Date
+        var endDate: Date
+        switch timeSelection {
+        case .morning:
+            startDate = morningStartTime
+            endDate = morningEndTime
+        case .afternoon:
+            startDate = afternoonStartTime
+            endDate = afternoonEndtime
+        case .evening:
+            startDate = eveningStartTime
+            endDate = eveningEndTime
+        default:
+            return nil
+        }
+        if Date() > endDate {
+            startDate = startDate.addingTimeInterval(86400)
+            endDate = endDate.addingTimeInterval(86400)
+        }
+        return try await eventService.selectDate(from: startDate, to: endDate, with: duration, rescheduling: task)
     }
     
     init() {
