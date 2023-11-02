@@ -21,6 +21,9 @@ extension DateComponents {
 }
 
 extension Date {
+    var midnight: Date {
+        DateComponents(calendar: Calendar.current, timeZone: .autoupdatingCurrent, year: Calendar.current.component(.year, from: self), month: Calendar.current.component(.month, from: self), day: Calendar.current.component(.day, from: self), hour: 0, minute: 0, second: 0).date ?? self
+    }
     static func hourAddingDayIfNeeded(from hour: Int) -> Date {
         DateComponents.hour(from: hour).date! > Date() ? DateComponents.hour(from: hour).date! : DateComponents.hour(from: hour).date!.addingTimeInterval(86400)
     }

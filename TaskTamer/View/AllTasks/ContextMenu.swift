@@ -16,16 +16,12 @@ struct AllTasksContextMenu: ViewModifier {
                 .contextMenu {
                     if !((task.sortStatus == .sorted(.other)) ^ (task.sortStatus.case ==  .skipped) ^ (task.sortStatus == .unsorted)) {
                         Menu {
-                            ForEach(Array(stride(from: 15, to: 241, by: 15)), id:\.self) { num in
-                                if num != task.duration(vm) {
-                                    let hours = num / 60
-                                    let mins = num % 60
-                                    let timeMins = hours * 60 + mins
-                                    let duration = Duration.seconds(timeMins * 60)
-                                    let format = duration.formatted(
-                                        .units(allowed: [.hours, .minutes, .seconds, .milliseconds], width: .wide))
-                                    Button(format) {
-                                        rescheduleInSameTimeBlock(task: task, duration: timeMins)
+                            ForEach(Array(stride(from: 15, to: 241, by: 15)), id:\.self) { minutes in
+                                let timeInterval = TimeInterval(minutes * 60)
+                                if timeInterval != vm.duration(of: task) {
+                                    let formattedTime = Duration.seconds(timeInterval).formatted(.units(allowed: [.hours, .minutes, .seconds], width: .abbreviated, zeroValueUnits: .hide, fractionalPart: .hide))
+                                    Button(formattedTime) {
+                                        rescheduleInSameTimeBlock(task: task, duration: timeInterval)
                                     }
                                 }
                             }
@@ -66,7 +62,7 @@ struct AllTasksContextMenu: ViewModifier {
         self.task = task
         self.vm = vm
     }
-    func rescheduleInSameTimeBlock(task: TaskItem, duration: Int) {
+    func rescheduleInSameTimeBlock(task: TaskItem, duration: TimeInterval) {
         Task {
             let timeSelection: TimeSelection
             switch task.sortStatus {
@@ -77,20 +73,21 @@ struct AllTasksContextMenu: ViewModifier {
             case .previous, .unsorted:
                 return
             }
-            await vm.rescheduleTask(task, timeSelection, duration: duration)
+            await vm.reschedule(task: task, within: timeSelection, with: duration)
         }
     }
     func rescheduleInDifferentTimeBlock(task: TaskItem, at timeSelection: TimeSelection) {
         Task {
-            let duration = task.duration(vm)
-            switch timeSelection {
-            case .morning, .afternoon, .evening:
-                await vm.rescheduleTask(task, timeSelection, duration: duration)
-            case .skip1, .skip3,.skip7:
-                await vm.rescheduleTask(task, timeSelection, duration: duration)
-            default:
-                return
-            }
+            let duration = vm.duration(of: task)
+            await vm.reschedule(task: task, within: timeSelection, with: duration)
+//            switch timeSelection {
+//            case .morning, .afternoon, .evening:
+//                await vm.rescheduleTask(task, timeSelection, duration: duration)
+//            case .skip1, .skip3,.skip7:
+//                await vm.rescheduleTask(task, timeSelection, duration: duration)
+//            default:
+//                return
+//            }
         }
     }
 }

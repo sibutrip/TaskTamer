@@ -43,15 +43,6 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
         }
     }
     
-    @MainActor
-    func duration(_ vm: ViewModel) -> Int {
-        guard let startDate = self.startDate, let endDate = self.endDate else {
-            return vm.timeBlockDuration
-        }
-        if self.sortStatus.case == .skipped { return vm.timeBlockDuration }
-        return Int(startDate.distance(to: endDate) / 60)
-    }
-    
     init(name: String) {
         id = UUID()
         eventID = ""
@@ -87,7 +78,7 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
             self.eventID = try await EventService.shared.scheduleEvent(for: self)
         case .skip1:
             if self.eventID != nil {
-                try EventService.shared.deleteEvent(for: self)
+                try await EventService.shared.remove(self)
             }
             self.sortStatus = .skipped(time)
             self.startDate = Calendar.current.date(byAdding: .day, value: 1, to: DateComponents.midnight.date!)!

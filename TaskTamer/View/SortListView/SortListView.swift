@@ -14,9 +14,7 @@ extension SubmitLabel {
 struct SortListView: View {
     
     @ScaledMetric(relativeTo: .body) var scaledPadding: CGFloat = 10
-    
-    @StateObject var dragManager = DragManager()
-    
+        
     enum FocusedField {
         case showKeyboard, dismissKeyboard
     }
@@ -24,7 +22,6 @@ struct SortListView: View {
     @ObservedObject var vm: ViewModel
     @FocusState private var isFocused: Bool
     @State var dropAction: TimeSelection = .noneSelected
-    @State private var dragAction: DragTask = .init(isDragging: false, timeSelection: .noneSelected, keyboardSelection: .dismissKeyboard)
     @State private var sortDidFail: Bool = false
     @State private var taskExpanded: TaskItem?
     @State private var taskDeleting: TaskItem?

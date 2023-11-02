@@ -14,45 +14,33 @@ class EventService {
     
     private let eventStore: EKEventStore
     
-    var rescheduledEvent: EKEvent?
-    
     public func userCalendars() -> [EKCalendar] {
         return eventStore.calendars(for: .event)
     }
     
-    private func reschedule(_ task: Scheduleable, in events: inout [EKEvent]) async throws {
-        guard let eventID = task.eventID else { return }
-        let fullPermission = await requestCalendarPermission(for: .full)
-        if fullPermission {
-            let eventToReschedule = eventStore.event(withIdentifier: eventID)
-            self.rescheduledEvent = eventToReschedule
-            events = events.filter { $0.eventIdentifier != task.eventID }
+    public func remove(_ task: Scheduleable) async throws {
+        guard let eventID = task.eventID else { throw EventServiceError.noPermission }
+        if await requestCalendarPermission(for: .full) {
+            guard let eventToReschedule = eventStore.event(withIdentifier: eventID) else {
+                throw EventServiceError.noPermission
+            }
+            try eventStore.remove(eventToReschedule, span: .thisEvent)
         } else {
             throw EventServiceError.noPermission
         }
     }
     
-    public func removeRescheduledEvent() {
-        do {
-            guard let rescheduledEvent = rescheduledEvent else  {return }
-            try eventStore.remove(rescheduledEvent, span: .thisEvent)
-            self.rescheduledEvent = nil
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    public func deleteEvent(for task: Scheduleable) throws -> Bool {
-        guard let eventID = task.eventID else { return false }
-        let event = eventStore.event(withIdentifier: eventID)
-        if let event = event {
-            try eventStore.remove(event, span: .thisEvent)
-            return true
-        } else {
-            print("no event!")
-            return false
-        }
-    }
+//    public func deleteEvent(for task: Scheduleable) throws -> Bool {
+//        guard let eventID = task.eventID else { return false }
+//        let event = eventStore.event(withIdentifier: eventID)
+//        if let event = event {
+//            try eventStore.remove(event, span: .thisEvent)
+//            return true
+//        } else {
+//            print("no event!")
+//            return false
+//        }
+//    }
     
     public func updateTaskTimes(for tasks: [Scheduleable]) -> [Scheduleable] {
         return tasks.map { task in
@@ -78,8 +66,9 @@ class EventService {
             event.calendar = eventStore.defaultCalendarForNewEvents
             event.addAlarm(.init(absoluteDate: startDate))
             try eventStore.save(event, span: .thisEvent)
-//            task.eventID = event.eventIdentifier
-            return event.eventIdentifier
+            //            task.eventID = event.eventIdentifier
+            let id = event.eventIdentifier
+            return id
         } else { throw EventServiceError.noPermission }
     }
     
@@ -95,12 +84,12 @@ class EventService {
         let predicate = eventStore.predicateForEvents(withStart: DateComponents.midnight.date!, end: endDate, calendars: [calendar])
         var events = eventStore.events(matching: predicate)
             .filter { $0.endDate <= endDate && $0.endDate > startDate }
-        if let task {
-            try await reschedule(task, in: &events)
-        }
+        //        if let task {
+        //            try await reschedule(task, in: &events)
+        //        }
         let freeTime = freeTime(in: events, from: startDate, to: endDate)
         let availableDates = freeTime
-                .flatMap { (startTime, endTime) in
+            .flatMap { (startTime, endTime) in
                 let distance = startTime.distance(to: endTime)
                 let numberOfAvailableSlots = Int(distance / duration) // rounds down
                 return (0..<numberOfAvailableSlots).map { index in

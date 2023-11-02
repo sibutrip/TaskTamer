@@ -42,7 +42,7 @@ struct DisclosureRow: View {
                     Button {
                         Haptic.medium()
                         Task {
-                            _ = await vm.sortTask(task, time.timeSelection, duration: timeBlockDuration)
+                            _ = await vm.schedule(task: task, within: time.timeSelection, with: TimeInterval(timeBlockDuration * 60))
                             taskExpanded = nil
                         }
                     } label: {
@@ -57,7 +57,7 @@ struct DisclosureRow: View {
                                         ForEach(displayedTimes(for: time.timeSelection), id: \.self) { date in
                                             Button(date.formatted(date: .omitted, time: .shortened)) {
                                                 Task {
-                                                    await vm.schedule(task: task, at: date, in: time.timeSelection, with: TimeInterval(timeBlockDuration * 60))
+                                                    await vm.schedule(task: task, within: time.timeSelection, with: TimeInterval(timeBlockDuration * 60))
                                                 }
                                             }
                                         }

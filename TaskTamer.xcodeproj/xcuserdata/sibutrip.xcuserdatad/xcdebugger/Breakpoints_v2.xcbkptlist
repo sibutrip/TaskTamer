@@ -13,5 +13,69 @@
             continueAfterRunningActions = "No">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6731E144-F7A4-4760-808B-066AD188F333"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TaskTamer/Services/EventService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
+            landmarkName = "scheduleEvent(for:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F1A43E8A-B104-4E15-8ED1-41EAD22681F3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TaskTamer/Services/EventService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "scheduleEvent(for:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F1A43E8A-B104-4E15-8ED1-41EAD22681F3 - de70ac9caa30a54b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) suspend resume partial function for TaskTamer.EventService.scheduleEvent(for: TaskTamer.Scheduleable) async throws -&gt; Swift.Optional&lt;Swift.String&gt;"
+                  moduleName = "TaskTamer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/sibutrip/Documents/XCode%20Projects/TaskTamer/TaskTamer/Services/EventService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "71"
+                  endingLineNumber = "71"
+                  offsetFromSymbolStart = "1968">
+               </Location>
+               <Location
+                  uuid = "F1A43E8A-B104-4E15-8ED1-41EAD22681F3 - de70ac9caa30a54b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) suspend resume partial function for TaskTamer.EventService.scheduleEvent(for: TaskTamer.Scheduleable) async throws -&gt; Swift.Optional&lt;Swift.String&gt;"
+                  moduleName = "TaskTamer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/sibutrip/Documents/XCode%20Projects/TaskTamer/TaskTamer/Services/EventService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "71"
+                  endingLineNumber = "71"
+                  offsetFromSymbolStart = "1872">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
