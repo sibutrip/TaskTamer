@@ -30,18 +30,6 @@ class EventService {
         }
     }
     
-//    public func deleteEvent(for task: Scheduleable) throws -> Bool {
-//        guard let eventID = task.eventID else { return false }
-//        let event = eventStore.event(withIdentifier: eventID)
-//        if let event = event {
-//            try eventStore.remove(event, span: .thisEvent)
-//            return true
-//        } else {
-//            print("no event!")
-//            return false
-//        }
-//    }
-    
     public func updateTaskTimes(for tasks: [Scheduleable]) -> [Scheduleable] {
         return tasks.map { task in
             var task = task
@@ -84,9 +72,6 @@ class EventService {
         let predicate = eventStore.predicateForEvents(withStart: DateComponents.midnight.date!, end: endDate, calendars: [calendar])
         var events = eventStore.events(matching: predicate)
             .filter { $0.endDate <= endDate && $0.endDate > startDate }
-        //        if let task {
-        //            try await reschedule(task, in: &events)
-        //        }
         let freeTime = freeTime(in: events, from: startDate, to: endDate)
         let availableDates = freeTime
             .flatMap { (startTime, endTime) in
