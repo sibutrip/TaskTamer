@@ -58,10 +58,12 @@ struct AllTasksRowView: View {
         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
             //TODO: make this a viewmodifier
             Button {
-                do {
-                    try vm.deleteTask(task)
-                } catch {
-                    deleteDidFail = true
+                Task {
+                    do {
+                        try await vm.delete(task)
+                    } catch {
+                        deleteDidFail = true
+                    }
                 }
             } label: {
                 Label("Delete", systemImage: "trash")

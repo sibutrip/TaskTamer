@@ -47,9 +47,11 @@ struct PreviousTaskSheet: View {
                         }
                         Button("Mark Selected as Complete") {
                             selectedTasks.forEach { task in
-                                do {
-                                    try vm.deleteTask(task)
-                                } catch { print(error.localizedDescription) }
+                                Task {
+                                    do {
+                                        try await vm.delete(task)
+                                    } catch { print(error.localizedDescription) }
+                                }
                             }
                             vm.tasks.removeAll { task in
                                 selectedTasks.contains { $0 == task }

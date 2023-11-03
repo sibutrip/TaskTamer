@@ -12,61 +12,58 @@ struct AllTasksContextMenu: ViewModifier {
     @ObservedObject var vm: ViewModel
     let task: TaskItem
     func body(content: Content) -> some View {
-            content
-                .contextMenu {
-                    if !((task.sortStatus == .sorted(.other)) ^ (task.sortStatus.case ==  .skipped) ^ (task.sortStatus == .unsorted)) {
-                        Menu {
-                            ForEach(Array(stride(from: 15, to: 241, by: 15)), id:\.self) { num in
-                                if num != task.duration(vm) {
-                                    let hours = num / 60
-                                    let mins = num % 60
-                                    let timeMins = hours * 60 + mins
-                                    let duration = Duration.seconds(timeMins * 60)
-                                    let format = duration.formatted(
-                                        .units(allowed: [.hours, .minutes, .seconds, .milliseconds], width: .wide))
-                                    Button(format) {
-                                        rescheduleInSameTimeBlock(task: task, duration: timeMins)
-                                    }
+        content
+            .contextMenu {
+                if !((task.sortStatus == .sorted(.other)) ^ (task.sortStatus.case ==  .skipped) ^ (task.sortStatus == .unsorted)) {
+                    Menu {
+                        ForEach(Array(stride(from: 15, to: 241, by: 15)), id:\.self) { minutes in
+                            let timeInterval = TimeInterval(minutes * 60)
+                            if timeInterval != vm.duration(of: task) {
+                                let formattedTime = Duration.seconds(timeInterval).formatted(.units(allowed: [.hours, .minutes, .seconds], width: .abbreviated, zeroValueUnits: .hide, fractionalPart: .hide))
+                                Button(formattedTime) {
+                                    rescheduleInSameTimeBlock(task: task, duration: timeInterval)
                                 }
                             }
-                        } label: {
-                            Label("Edit Duration", systemImage: "timer")
                         }
-
+                    } label: {
+                        Label("Edit Duration", systemImage: "timer")
                     }
-                    Menu {
-                        ForEach(Time.days) { day in
-                            if day.name != task.sortStatus.sortName {
-                                Button {
+                    
+                }
+                Menu {
+                    ForEach(Time.days) { day in
+                        if day.name != task.sortStatus.sortName {
+                            Button {
                                 rescheduleInDifferentTimeBlock(task: task, at: day.timeSelection)
                             } label: {
                                 Label(day.name, systemImage: day.image)
                             }
                         }
                     }
-                    } label: {
-                        Label("Reassign Time Block", systemImage: "calendar")
-                    }
-                    Menu {
-                        ForEach(Time.skips) { skip in
-                            if skip.timeSelection != task.sortStatus.timeSelection {
-                                Button(role: .destructive) {
-                                    rescheduleInDifferentTimeBlock(task: task, at: skip.timeSelection)
-                                } label: {
-                                    Label(skip.name, image: skip.image)
-                                }
+                } label: {
+                    Label("Reassign Time Block", systemImage: "calendar")
+                }
+                Menu {
+                    ForEach(Time.skips) { skip in
+                        if skip.timeSelection != task.sortStatus.timeSelection {
+                            Button(role: .destructive) {
+                                rescheduleInDifferentTimeBlock(task: task, at: skip.timeSelection)
+                            } label: {
+                                Label(skip.name, image: skip.image)
                             }
                         }
-                    } label: {
-                        Label("Skip", systemImage: "gobackward")
                     }
+                } label: {
+                    Label("Skip", systemImage: "gobackward")
                 }
+            }
     }
     init(task: TaskItem, vm: ViewModel) {
         self.task = task
         self.vm = vm
     }
-    func rescheduleInSameTimeBlock(task: TaskItem, duration: Int) {
+    
+    func rescheduleInSameTimeBlock(task: TaskItem, duration: TimeInterval) {
         Task {
             let timeSelection: TimeSelection
             switch task.sortStatus {
@@ -77,20 +74,14 @@ struct AllTasksContextMenu: ViewModifier {
             case .previous, .unsorted:
                 return
             }
-            await vm.rescheduleTask(task, timeSelection, duration: duration)
+            await vm.reschedule(task, within: timeSelection, with: duration)
         }
     }
+    
     func rescheduleInDifferentTimeBlock(task: TaskItem, at timeSelection: TimeSelection) {
         Task {
-            let duration = task.duration(vm)
-            switch timeSelection {
-            case .morning, .afternoon, .evening:
-                await vm.rescheduleTask(task, timeSelection, duration: duration)
-            case .skip1, .skip3,.skip7:
-                await vm.rescheduleTask(task, timeSelection, duration: duration)
-            default:
-                return
-            }
+            let duration = vm.duration(of: task)
+            await vm.reschedule(task, within: timeSelection, with: duration)
         }
     }
 }

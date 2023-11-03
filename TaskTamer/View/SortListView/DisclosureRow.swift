@@ -26,7 +26,7 @@ struct DisclosureRow: View {
         }
         var timeCounter = startTime
         var displayedTimes = [Date]()
-        while timeCounter < endTime.addingTimeInterval(TimeInterval(timeBlockDuration * 60)) {
+        while timeCounter < endTime {
             displayedTimes.append(timeCounter)
             timeCounter = timeCounter.addingTimeInterval(TimeInterval(timeBlockDuration * 60))
         }
@@ -42,34 +42,34 @@ struct DisclosureRow: View {
                     Button {
                         Haptic.medium()
                         Task {
-                            _ = await vm.sortTask(task, time.timeSelection, duration: timeBlockDuration)
+                            _ = await vm.schedule(task: task, within: time.timeSelection, with: TimeInterval(timeBlockDuration * 60))
                             taskExpanded = nil
                         }
                     } label: {
-                            if times == Time.days {
-                                Label(time.name, systemImage: time.image)
-                                    .foregroundColor(time.color)
-                                    .labelStyle(.iconOnly)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 8)
-                                    .contentShape(Rectangle())
-                                    .contextMenu {
-                                        ForEach(displayedTimes(for: time.timeSelection), id: \.self) { date in
-                                            Button(date.formatted(date: .omitted, time: .shortened)) {
-                                                Task {
-                                                    await vm.schedule(task: task, at: date, in: time.timeSelection, with: TimeInterval(timeBlockDuration * 60))
-                                                }
+                        if times == Time.days {
+                            Label(time.name, systemImage: time.image)
+                                .foregroundColor(time.color)
+                                .labelStyle(.iconOnly)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 8)
+                                .contentShape(Rectangle())
+                                .contextMenu {
+                                    ForEach(displayedTimes(for: time.timeSelection), id: \.self) { date in
+                                        Button(date.formatted(date: .omitted, time: .shortened)) {
+                                            Task {
+                                                await vm.reschedule(task, at: date, within: time.timeSelection, with: TimeInterval(timeBlockDuration * 60))
                                             }
                                         }
                                     }
-                            } else {
-                                Label(time.name, image: time.image)
-                                    .foregroundColor(time.color)
-                                    .labelStyle(.iconOnly)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 8)
-                                    .contentShape(Rectangle())
-                            }
+                                }
+                        } else {
+                            Label(time.name, image: time.image)
+                                .foregroundColor(time.color)
+                                .labelStyle(.iconOnly)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 8)
+                                .contentShape(Rectangle())
+                        }
                     }
                     .buttonStyle(.plain)
                 }

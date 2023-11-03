@@ -70,4 +70,17 @@ enum SortStatus: Equatable, Codable {
             return "Previous"
         }
     }
+    
+    var isScheduled: Bool {
+        switch self {
+        case .sorted(_):
+            true
+        case .skipped(_):
+            false
+        case .previous:
+            true
+        case .unsorted:
+            false
+        }
+    }
 }

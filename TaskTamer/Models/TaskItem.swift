@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct TaskItem: Identifiable, Equatable, Codable {
+struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
     let id: UUID
-    var eventID: String
+    var eventID: String?
+    var eventTitle: String { name }
     let name: String
     var sortStatus: SortStatus = .unsorted
     var startDate: Date?
@@ -42,25 +43,15 @@ struct TaskItem: Identifiable, Equatable, Codable {
         }
     }
     
-    @MainActor
-    func duration(_ vm: ViewModel) -> Int {
-        guard let startDate = self.startDate, let endDate = self.endDate else {
-            return vm.timeBlockDuration
-        }
-        if self.sortStatus.case == .skipped { return vm.timeBlockDuration }
-        return Int(startDate.distance(to: endDate) / 60)
-    }
-    
     init(name: String) {
         id = UUID()
-        eventID = ""
         self.name = name
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(UUID.self, forKey: .id)
-        self.eventID = try! container.decode(String.self, forKey: .eventID)
+        self.eventID = try container.decodeIfPresent(String.self, forKey: .eventID)
         self.name = try container.decode(String.self, forKey: .name)
         self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
         self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
@@ -73,34 +64,19 @@ struct TaskItem: Identifiable, Equatable, Codable {
         }
     }
     
-    mutating func sort(duration: TimeInterval, at time: TimeSelection, within tasks: [TaskItem], vm: ViewModel, isRescheduling: Bool = false, at specifiedTimes: (startTime: Date, endTime: Date)? = nil) async throws {
+    /// Sorts task within a TimeSelection from start to end time
+    /// - Parameter startTime: the start time of the task
+    /// - Parameter startTime: the end time of the task
+    /// - Parameter time: the TimeSelection to sort the task
+    mutating func sort(from startDate: Date?, to endDate: Date?, at time: TimeSelection) async throws {
         switch time {
         case .morning, .afternoon, .evening:
-            let eventService = EventService.shared
-            let taskToReschedule = isRescheduling ? self : nil
-            let scheduledDate: (startTime: Date, endTime: Date)?
-            if var specifiedTimes {
-                if Date() > specifiedTimes.0 {
-                    specifiedTimes.startTime = Calendar.autoupdatingCurrent.date(byAdding: .day, value: 1, to: specifiedTimes.startTime) ?? specifiedTimes.startTime
-                    specifiedTimes.endTime = Calendar.autoupdatingCurrent.date(byAdding: .day, value: 1, to: specifiedTimes.endTime) ?? specifiedTimes.endTime
-                }
-                scheduledDate = specifiedTimes
-            } else {
-                scheduledDate = try await eventService.selectDate(duration: duration, from: time, within: tasks, vm: vm, rescheduling: taskToReschedule)
-            }
-            
-            guard let scheduledDate = scheduledDate else {
-                throw EventServiceError.scheduleFull
-            }
-            (self.startDate, self.endDate) = scheduledDate
-//            print(startDate?.formatted(),endDate?.formatted())
+            guard let startDate, let endDate else { throw EventServiceError.unknown }
+            self.startDate = startDate
+            self.endDate = endDate
             self.sortStatus = .sorted(time)
-            try await eventService.scheduleEvent(for: &self)
+            self.eventID = try await EventService.shared.scheduleEvent(for: self)
         case .skip1:
-            if self.eventID != "" {
-                let eventService = EventService.shared
-                try eventService.deleteEvent(for: &self)
-            }
             self.sortStatus = .skipped(time)
             self.startDate = Calendar.current.date(byAdding: .day, value: 1, to: DateComponents.midnight.date!)!
             self.endDate = Calendar.current.date(byAdding: .day, value: 1, to: DateComponents.midnight.date!)!

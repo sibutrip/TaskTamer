@@ -24,9 +24,11 @@ struct Unsort: ViewModifier {
             content
                 .swipeActions(edge: .leading, allowsFullSwipe: true) {
                     Button {
-                        withAnimation {
-                            vm.unscheduleTask(task)
-                        }
+//                        withAnimation {
+                            Task {
+                                await vm.unscheduleTask(task)
+                            }
+//                        }
                     } label: {
                         Label("Unsort", systemImage: "arrow.uturn.backward")
                     }

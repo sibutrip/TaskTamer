@@ -15,7 +15,7 @@ class ViewModel: ObservableObject {
     @AppStorage("timeBlockDuration") var timeBlockDuration = 15
     @Published var showingPreviousTaskSheet = false
     @Published var showingSettingsSheet = false
-
+    
     @Published var scheduleFull = false
     @Published var noPermission = false
     @Published var unknownError = false
@@ -47,11 +47,11 @@ class ViewModel: ObservableObject {
     }
     
     public func refreshTasks() {
-        let tasks = eventService.updateTaskTimes(for: tasks)
-        self.tasks = refreshSortStatus(for: tasks)
+        guard let tasks = eventService.updateTaskTimes(for: tasks) as? [TaskItem] else { return }
+        refreshSortStatus(for: tasks)
     }
     
-    private func refreshSortStatus(for tasks: [TaskItem]) -> [TaskItem] {
+    private func refreshSortStatus(for tasks: [TaskItem]) {
         let morningStart = morningStartTime.adjustedToCurrentDay
         let morningEnd = morningEndTime.adjustedToCurrentDay
         let afternoonStart = afternoonStartTime.adjustedToCurrentDay
@@ -59,7 +59,7 @@ class ViewModel: ObservableObject {
         let eveningStart = eveningStartTime.adjustedToCurrentDay
         let eveningEnd = eveningEndTime.adjustedToCurrentDay
         
-        return tasks.map { task in
+        self.tasks = tasks.map { task in
             var task = task
             guard let startDate = task.startDate, let endDate = task.endDate else { return task }
             if endDate < Date() {
@@ -80,39 +80,17 @@ class ViewModel: ObservableObject {
         }
     }
     
-    /// duration in minutes, returns a bool to indicate success or not
-    public func sortTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900, isRescheduling: Bool = false) async -> Bool {
-        do {
-            var task = task
-            let duration = Double(duration * 60)
-            try await task.sort(duration: duration, at: time, within: tasks, vm: self, isRescheduling: isRescheduling)
-            var tasks = self.tasks
-            tasks = tasks.filter {
-                $0.id != task.id
-            }
-            tasks.append(task)
-            self.tasks = tasks
-            return true
-        } catch {
-            let eventServiceError = error as? EventServiceError
-            switch eventServiceError {
-            case .noPermission:
-                noPermission = true
-            case .scheduleFull:
-                scheduleFull = true
-            case .none:
-                unknownError = true
-            }
-            return false
-        }
-    }
-    
-    public func unscheduleTask(_ task: TaskItem) {
+    public func unscheduleTask(_ task: TaskItem) async {
         var task = task
         var tasks = self.tasks
         if let _ = task.startDate {
             if task.sortStatus.sortName != "Skipped"  {
-                try? eventService.deleteEvent(for: &task)
+                do {
+                    try await eventService.remove(task)
+                    task.eventID = ""
+                } catch {
+                    print("could not delete event for unknown reason")
+                }
             }
         }
         tasks = tasks.filter {
@@ -124,11 +102,16 @@ class ViewModel: ObservableObject {
         self.tasks = tasks
     }
     
-    public func deleteTask(_ task: TaskItem) throws {
+    public func delete(_ task: TaskItem) async throws {
         var task = task
         var tasks = self.tasks
         if let _ = task.startDate {
-            try? eventService.deleteEvent(for: &task)
+            do {
+                try await eventService.remove(task)
+                task.eventID = ""
+            } catch {
+                print("could not delete event for unknown reason")
+            }
         }
         tasks = tasks.filter {
             $0.id != task.id
@@ -136,11 +119,26 @@ class ViewModel: ObservableObject {
         self.tasks = tasks
     }
     
-    public func schedule(task: TaskItem, at time: Date, in timeSelection: TimeSelection, with duration: TimeInterval) async {
+    /// Schedules a task at a start time with a given duration
+    /// - Parameter task: TaskItem to schedule
+    /// - Parameter time: the start time of the task. If no time is selected, a random, valid time will be generated
+    /// - Parameter timeSelection: TimeSelection to schedule the event within
+    /// - Parameter duration: Duration of task from start to end
+    public func schedule(task: TaskItem, at time: Date? = nil, within timeSelection: TimeSelection, with duration: TimeInterval) async {
         do {
             var task = task
-            let specifiedDate: (Date,Date) = (time,time.addingTimeInterval(duration))
-            try await task.sort(duration: duration, at: timeSelection, within: tasks, vm: self, at: specifiedDate)
+            
+            let scheduledDate: (startDate: Date, endDate: Date)?
+            if let time {
+                var specifiedTimes = (startDate: time,endDate: time.addingTimeInterval(duration))
+                specifiedTimes.startDate = Calendar.autoupdatingCurrent.date(byAdding: .day, value: 1, to: specifiedTimes.startDate) ?? specifiedTimes.startDate
+                specifiedTimes.endDate = Calendar.autoupdatingCurrent.date(byAdding: .day, value: 1, to: specifiedTimes.endDate) ?? specifiedTimes.endDate
+                scheduledDate = specifiedTimes
+            } else {
+                scheduledDate = try await randomValidDate(in: timeSelection, with: duration)
+            }
+            
+            try await task.sort(from: scheduledDate?.startDate, to: scheduledDate?.endDate, at: timeSelection)
             var tasks = self.tasks
             tasks = tasks.filter {
                 $0.id != task.id
@@ -154,25 +152,22 @@ class ViewModel: ObservableObject {
                 noPermission = true
             case .scheduleFull:
                 scheduleFull = true
+            case .unknown:
+                fatalError("an unknown issue occured")
             case .none:
                 unknownError = true
             }
         }
     }
     
-    public func rescheduleTask(_ task: TaskItem, _ time: TimeSelection, duration: Int = 900) async {
-        if await sortTask(task, time, duration: duration, isRescheduling: true) {
-            
-            eventService.removeRescheduledEvent()
-        }
-    }
-    
-    private func initTasks() {
-        let tasks: [TaskItem]? = try? DirectoryService.readModelFromDisk()
-        if let tasks = tasks {
-            _tasks.projectedValue = tasks.sorted { $0.name < $1.name }
-        } else {
-            self.tasks = []
+    public func reschedule(_ task: TaskItem, at time: Date? = nil, within timeSelection: TimeSelection, with duration: TimeInterval) async {
+        do {
+            if task.sortStatus.isScheduled {
+                try await eventService.remove(task)
+            }
+            await schedule(task: task, at: time, within: timeSelection, with: duration)
+        } catch {
+            self.unknownError = true
         }
     }
     
@@ -184,9 +179,42 @@ class ViewModel: ObservableObject {
         await UIApplication.shared.open(url)
     }
     
+    func randomValidDate(in timeSelection: TimeSelection, with duration: TimeInterval, rescheduling task: Scheduleable? = nil) async throws -> (startDate: Date,endDate: Date)? {
+        var startDate: Date
+        var endDate: Date
+        switch timeSelection {
+        case .morning:
+            startDate = morningStartTime
+            endDate = morningEndTime
+        case .afternoon:
+            startDate = afternoonStartTime
+            endDate = afternoonEndtime
+        case .evening:
+            startDate = eveningStartTime
+            endDate = eveningEndTime
+        default:
+            return nil
+        }
+        if Date() > endDate {
+            startDate = startDate.addingTimeInterval(86400)
+            endDate = endDate.addingTimeInterval(86400)
+        }
+        return try await eventService.selectDate(from: startDate, to: endDate, with: duration, rescheduling: task)
+    }
+    
+    func duration(of task: TaskItem) -> TimeInterval {
+        let defaultDuration = TimeInterval(timeBlockDuration * 60)
+        guard let startDate = task.startDate, let endDate = task.endDate else {
+            return defaultDuration
+        }
+        if task.sortStatus.case == .skipped {
+            return defaultDuration
+        }
+        return startDate.distance(to: endDate)
+    }
+    
     init() {
         eventService = EventService.shared
-        initTasks()
         refreshTasks()
         tasks.forEach { task in
             if task.sortStatus == .previous {
