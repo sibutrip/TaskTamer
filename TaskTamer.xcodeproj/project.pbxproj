@@ -20,6 +20,7 @@
 		744C3AFF2A5894A100CE124E /* ViewModel+TimeBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3AFE2A5894A100CE124E /* ViewModel+TimeBlocks.swift */; };
 		744C3B012A58CCA100CE124E /* TimeLengthStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C3B002A58CCA100CE124E /* TimeLengthStepper.swift */; };
 		745376B92A4B1FF2000382A0 /* SortSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745376B82A4B1FF2000382A0 /* SortSwipeView.swift */; };
+		745EF91C2AF57B2200868568 /* TaskTamerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745EF91B2AF57B2200868568 /* TaskTamerTests.swift */; };
 		746BFB3D2AF18C3C0057C164 /* TaskTamerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746BFB3C2AF18C3C0057C164 /* TaskTamerApp.swift */; };
 		746BFB3F2AF18C6C0057C164 /* TaskItem+Scheduleable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746BFB3E2AF18C6C0057C164 /* TaskItem+Scheduleable.swift */; };
 		749281FE2A5A36B400208DBA /* TimeBlockDuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749281FD2A5A36B400208DBA /* TimeBlockDuration.swift */; };
@@ -45,6 +46,16 @@
 		74EFBDD72A49C191002C8388 /* TaskService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74EFBDB82A49C191002C8388 /* TaskService.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		745EF91D2AF57B2200868568 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 748DAE3429FD930D003A3B06 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 748DAE3B29FD930D003A3B06;
+			remoteInfo = TaskTamer;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		741D63172A5B17C4004AE206 /* ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenu.swift; sourceTree = "<group>"; };
 		744C3ACD2A4F7EEB00CE124E /* DateComponents+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateComponents+Extension.swift"; sourceTree = "<group>"; };
@@ -60,6 +71,8 @@
 		744C3AFE2A5894A100CE124E /* ViewModel+TimeBlocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModel+TimeBlocks.swift"; sourceTree = "<group>"; };
 		744C3B002A58CCA100CE124E /* TimeLengthStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLengthStepper.swift; sourceTree = "<group>"; };
 		745376B82A4B1FF2000382A0 /* SortSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortSwipeView.swift; sourceTree = "<group>"; };
+		745EF9192AF57B2200868568 /* TaskTamerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaskTamerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		745EF91B2AF57B2200868568 /* TaskTamerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTamerTests.swift; sourceTree = "<group>"; };
 		746BFB3C2AF18C3C0057C164 /* TaskTamerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTamerApp.swift; sourceTree = "<group>"; };
 		746BFB3E2AF18C6C0057C164 /* TaskItem+Scheduleable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TaskItem+Scheduleable.swift"; sourceTree = "<group>"; };
 		748DAE3C29FD930D003A3B06 /* TaskTamer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskTamer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,6 +100,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		745EF9162AF57B2200868568 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		748DAE3929FD930D003A3B06 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -117,10 +137,19 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		745EF91A2AF57B2200868568 /* TaskTamerTests */ = {
+			isa = PBXGroup;
+			children = (
+				745EF91B2AF57B2200868568 /* TaskTamerTests.swift */,
+			);
+			path = TaskTamerTests;
+			sourceTree = "<group>";
+		};
 		748DAE3329FD930D003A3B06 = {
 			isa = PBXGroup;
 			children = (
 				74EFBD8D2A49C191002C8388 /* TaskTamer */,
+				745EF91A2AF57B2200868568 /* TaskTamerTests */,
 				748DAE3D29FD930D003A3B06 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				748DAE3C29FD930D003A3B06 /* TaskTamer.app */,
+				745EF9192AF57B2200868568 /* TaskTamerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,6 +270,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		745EF9182AF57B2200868568 /* TaskTamerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 745EF9212AF57B2200868568 /* Build configuration list for PBXNativeTarget "TaskTamerTests" */;
+			buildPhases = (
+				745EF9152AF57B2200868568 /* Sources */,
+				745EF9162AF57B2200868568 /* Frameworks */,
+				745EF9172AF57B2200868568 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				745EF91E2AF57B2200868568 /* PBXTargetDependency */,
+			);
+			name = TaskTamerTests;
+			productName = TaskTamerTests;
+			productReference = 745EF9192AF57B2200868568 /* TaskTamerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		748DAE3B29FD930D003A3B06 /* TaskTamer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 748DAE4A29FD930E003A3B06 /* Build configuration list for PBXNativeTarget "TaskTamer" */;
@@ -264,9 +312,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					745EF9182AF57B2200868568 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = 748DAE3B29FD930D003A3B06;
+					};
 					748DAE3B29FD930D003A3B06 = {
 						CreatedOnToolsVersion = 14.3;
 					};
@@ -286,11 +338,19 @@
 			projectRoot = "";
 			targets = (
 				748DAE3B29FD930D003A3B06 /* TaskTamer */,
+				745EF9182AF57B2200868568 /* TaskTamerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		745EF9172AF57B2200868568 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		748DAE3A29FD930D003A3B06 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -303,6 +363,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		745EF9152AF57B2200868568 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				745EF91C2AF57B2200868568 /* TaskTamerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		748DAE3829FD930D003A3B06 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -346,7 +414,60 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		745EF91E2AF57B2200868568 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 748DAE3B29FD930D003A3B06 /* TaskTamer */;
+			targetProxy = 745EF91D2AF57B2200868568 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		745EF91F2AF57B2200868568 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3UR85MK9RT;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.CoryTripathy.TaskTamerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TaskTamer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TaskTamer";
+			};
+			name = Debug;
+		};
+		745EF9202AF57B2200868568 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3UR85MK9RT;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.CoryTripathy.TaskTamerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TaskTamer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TaskTamer";
+			};
+			name = Release;
+		};
 		748DAE4829FD930E003A3B06 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -538,6 +659,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		745EF9212AF57B2200868568 /* Build configuration list for PBXNativeTarget "TaskTamerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				745EF91F2AF57B2200868568 /* Debug */,
+				745EF9202AF57B2200868568 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		748DAE3729FD930D003A3B06 /* Build configuration list for PBXProject "TaskTamer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
