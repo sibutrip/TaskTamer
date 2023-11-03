@@ -137,11 +137,8 @@ class ViewModel: ObservableObject {
             } else {
                 scheduledDate = try await randomValidDate(in: timeSelection, with: duration)
             }
-            guard let scheduledDate else {
-                throw EventServiceError.unknown
-            }
             
-            try await task.sort(from: scheduledDate.startDate, to: scheduledDate.endDate, at: timeSelection)
+            try await task.sort(from: scheduledDate?.startDate, to: scheduledDate?.endDate, at: timeSelection)
             var tasks = self.tasks
             tasks = tasks.filter {
                 $0.id != task.id
@@ -163,21 +160,14 @@ class ViewModel: ObservableObject {
         }
     }
     
-    public func reschedule(task: TaskItem, at time: Date? = nil, within timeSelection: TimeSelection, with duration: TimeInterval) async {
+    public func reschedule(_ task: TaskItem, at time: Date? = nil, within timeSelection: TimeSelection, with duration: TimeInterval) async {
         do {
-            try await eventService.remove( task)
+            if task.sortStatus.isScheduled {
+                try await eventService.remove(task)
+            }
             await schedule(task: task, at: time, within: timeSelection, with: duration)
         } catch {
             self.unknownError = true
-        }
-    }
-    
-    private func initTasks() {
-        let tasks: [TaskItem]? = try? DirectoryService.readModelFromDisk()
-        if let tasks = tasks {
-            _tasks.projectedValue = tasks.sorted { $0.name < $1.name }
-        } else {
-            self.tasks = []
         }
     }
     
@@ -225,7 +215,6 @@ class ViewModel: ObservableObject {
     
     init() {
         eventService = EventService.shared
-        initTasks()
         refreshTasks()
         tasks.forEach { task in
             if task.sortStatus == .previous {

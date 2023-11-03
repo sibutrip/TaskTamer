@@ -9,10 +9,14 @@ import Foundation
 import SwiftUI
 
 @propertyWrapper
-struct Saving<T:Encodable>: DynamicProperty {
+struct Saving<T:Codable>: DynamicProperty {
     var projectedValue: [T] = []
     var wrappedValue: [T] {
-        get {
+        mutating get {
+            if projectedValue.isEmpty {
+                let models: [T] = (try? DirectoryService.readModelFromDisk()) ?? []
+                self.projectedValue = models
+            }
             return projectedValue
         }
         set {

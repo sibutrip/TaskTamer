@@ -45,14 +45,13 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
     
     init(name: String) {
         id = UUID()
-        eventID = ""
         self.name = name
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(UUID.self, forKey: .id)
-        self.eventID = try! container.decode(String.self, forKey: .eventID)
+        self.eventID = try container.decodeIfPresent(String.self, forKey: .eventID)
         self.name = try container.decode(String.self, forKey: .name)
         self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
         self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
@@ -69,17 +68,15 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
     /// - Parameter startTime: the start time of the task
     /// - Parameter startTime: the end time of the task
     /// - Parameter time: the TimeSelection to sort the task
-    mutating func sort(from startDate: Date, to endDate: Date, at time: TimeSelection) async throws {
+    mutating func sort(from startDate: Date?, to endDate: Date?, at time: TimeSelection) async throws {
         switch time {
         case .morning, .afternoon, .evening:
+            guard let startDate, let endDate else { throw EventServiceError.unknown }
             self.startDate = startDate
             self.endDate = endDate
             self.sortStatus = .sorted(time)
             self.eventID = try await EventService.shared.scheduleEvent(for: self)
         case .skip1:
-            if self.eventID != nil {
-                try await EventService.shared.remove(self)
-            }
             self.sortStatus = .skipped(time)
             self.startDate = Calendar.current.date(byAdding: .day, value: 1, to: DateComponents.midnight.date!)!
             self.endDate = Calendar.current.date(byAdding: .day, value: 1, to: DateComponents.midnight.date!)!

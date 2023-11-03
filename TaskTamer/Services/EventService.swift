@@ -146,6 +146,7 @@ class EventService {
                     result = try await store.requestAccess(to: .event)
                 }
             }
+            eventStore.reset()
             return result
         } catch {
             return false
