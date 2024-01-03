@@ -71,7 +71,7 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
     mutating func sort(from startDate: Date?, to endDate: Date?, at time: TimeSelection) async throws {
         switch time {
         case .morning, .afternoon, .evening:
-            guard let startDate, let endDate else { throw EventServiceError.unknown }
+            guard let startDate, let endDate else { throw EventServiceError.scheduleFull }
             self.startDate = startDate
             self.endDate = endDate
             self.sortStatus = .sorted(time)

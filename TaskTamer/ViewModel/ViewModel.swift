@@ -153,7 +153,7 @@ class ViewModel: ObservableObject {
             case .scheduleFull:
                 scheduleFull = true
             case .unknown:
-                fatalError("an unknown issue occured")
+                unknownError = true
             case .none:
                 unknownError = true
             }
