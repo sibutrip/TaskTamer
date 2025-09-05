@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Foundation
-
 struct PreferredTimeBlocks: View {
     @Environment(\.dismiss) var dismiss
 
@@ -18,6 +17,7 @@ struct PreferredTimeBlocks: View {
         let components = DateComponents(calendar: .current, hour: 9, minute: 0)
         return Calendar.current.date(from: components)!
     }()
+    @State private var tryToReenablePermissionOnForeground = false
     @State var morningStart: Date
     @State var morningEnd: Date
     @State var afternoonStart: Date
@@ -65,10 +65,12 @@ struct PreferredTimeBlocks: View {
                     Toggle("Enable Notifications", isOn: $notificationManager.isEnabled)
                     DatePicker("Reminder Time", selection: $notificationManager.reminderTime, displayedComponents: [.hourAndMinute])
                 }
-                .alert("Enable permissions in your settings to receive notifications", isPresented: $notificationManager.triedToEnableButNoPermission) {
+                .alert("Update your app permissions in order to enable notifications",
+                       isPresented: $notificationManager.triedToEnableButNoPermission) {
                     HStack {
                         Button("No thanks", role: .cancel) { notificationManager.triedToEnableButNoPermission = false }
-                        Button("Take me there") {
+                        Button("Take me there!") {
+                            tryToReenablePermissionOnForeground = true
                             Task {
                                 if let url = URL(string: UIApplication.openSettingsURLString) {
                                     // Ask the system to open that URL.
@@ -77,6 +79,8 @@ struct PreferredTimeBlocks: View {
                             }
                         }
                     }
+                } message: {
+                    Text("We'll only send notifications at your daily reminder time")
                 }
             }
             .navigationTitle("Settings")
@@ -84,6 +88,9 @@ struct PreferredTimeBlocks: View {
             .alert("Time Blocks must not overlap.", isPresented: $invalidTimes) {
                 Button("Ok") { invalidTimes = false }
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            tryToReenablePermission()
         }
     }
     func save() {
@@ -111,6 +118,21 @@ struct PreferredTimeBlocks: View {
         eveningEnd = vm.eveningEndTime
         timeBlockDuration = 15
     }
+    func load() {
+        morningStart = vm.morningStartTime
+        morningEnd = vm.morningEndTime
+        afternoonStart = vm.afternoonStartTime
+        afternoonEnd = vm.afternoonEndtime
+        eveningStart = vm.eveningStartTime
+        eveningEnd = vm.eveningEndTime
+    }
+
+    func tryToReenablePermission() {
+        if tryToReenablePermissionOnForeground {
+            tryToReenablePermissionOnForeground = false
+            notificationManager.isEnabled = true
+        }
+    }
     init(_ vm: ViewModel) {
         self.vm = vm
         _morningStart = State<Date>.init(initialValue: vm.morningStartTime)
@@ -121,14 +143,6 @@ struct PreferredTimeBlocks: View {
         _eveningEnd = State<Date>.init(initialValue: vm.eveningEndTime)
         _timeBlockDuration = State<Int>.init(initialValue: vm.timeBlockDuration)
         load()
-    }
-    func load() {
-        morningStart = vm.morningStartTime
-        morningEnd = vm.morningEndTime
-        afternoonStart = vm.afternoonStartTime
-        afternoonEnd = vm.afternoonEndtime
-        eveningStart = vm.eveningStartTime
-        eveningEnd = vm.eveningEndTime
     }
 }
 

@@ -64,6 +64,7 @@ struct PreviousTaskSheet: View {
                     }
                 }
             }
+            .animation(.default, value: vm.tasks)
             .navigationTitle("Previous Tasks")
         }
     }

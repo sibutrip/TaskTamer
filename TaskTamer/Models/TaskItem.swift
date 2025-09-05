@@ -64,7 +64,7 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
         self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
         self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
         let sortStatus = try container.decode(SortStatus.self, forKey: .sortStatus)
-        if let endDate = endDate, Date() > endDate && sortStatus != .complete {
+        if let endDate = endDate, Date() > endDate && sortStatus != .complete && sortStatus != .unsorted {
             self.sortStatus = .previous
         } else {
             self.sortStatus = sortStatus

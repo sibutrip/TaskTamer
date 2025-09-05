@@ -92,22 +92,20 @@ class ViewModel: ObservableObject {
     }
     
     public func unschedule(_ task: TaskItem) async {
+        guard task.sortStatus.case != .skipped else { return }
         var task = task
         var tasks = self.tasks
-        if let _ = task.startDate {
-            if task.sortStatus.sortName != "Skipped"  {
-                do {
-                    try await eventService.remove(task)
-                    task.eventID = ""
-                } catch {
-                    print("could not delete event for unknown reason")
-                }
-            }
+        do {
+            try await eventService.remove(task)
+            task.eventID = ""
+        } catch {
+            print("could not delete event for unknown reason")
         }
         tasks = tasks.filter {
             $0.id != task.id
         }
         task.startDate = nil
+        task.endDate = nil
         task.sortStatus = .unsorted
         tasks.append(task)
         self.tasks = tasks
