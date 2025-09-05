@@ -20,22 +20,23 @@ struct Unsort: ViewModifier {
     }
     
     func body(content: Content) -> some View {
-        if task.sortStatus != .unsorted {
-            content
-                .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                    Button {
-//                        withAnimation {
+        Group {
+            if task.sortStatus != .unsorted {
+                content
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button {
                             Task {
                                 await vm.unschedule(task)
                             }
-//                        }
-                    } label: {
-                        Label("Unsort", systemImage: "arrow.uturn.backward")
+                        } label: {
+                            Label("Unsort", systemImage: "arrow.uturn.backward")
+                        }
+                        .tint(.yellow)
                     }
-                    .tint(.yellow)
-                }
-        } else {
-            content
+            } else {
+                content
+            }
         }
+        .animation(.default, value: vm.tasks)
     }
 }

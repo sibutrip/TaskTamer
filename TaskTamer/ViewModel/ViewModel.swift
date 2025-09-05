@@ -92,14 +92,15 @@ class ViewModel: ObservableObject {
     }
     
     public func unschedule(_ task: TaskItem) async {
-        guard task.sortStatus.case != .skipped else { return }
         var task = task
         var tasks = self.tasks
-        do {
-            try await eventService.remove(task)
-            task.eventID = ""
-        } catch {
-            print("could not delete event for unknown reason")
+        if task.sortStatus.case != .skipped {
+            do {
+                try await eventService.remove(task)
+                task.eventID = ""
+            } catch {
+                print("could not delete event with error: \(error.localizedDescription)")
+            }
         }
         tasks = tasks.filter {
             $0.id != task.id
@@ -119,7 +120,7 @@ class ViewModel: ObservableObject {
                 try await eventService.remove(task)
                 task.eventID = ""
             } catch {
-                print("could not delete event for unknown reason")
+                print("could not delete event with error: \(error.localizedDescription)")
             }
         }
         tasks = tasks.filter {
