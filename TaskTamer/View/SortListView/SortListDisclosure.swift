@@ -112,7 +112,8 @@ struct SortListDisclosure: View {
                     .frame(width: max(xOffset, 0))
                     .overlay {
                         HStack {
-                            Text("Delete")
+                            Label("Delete", systemImage: "trash.fill")
+                                .labelStyle(.iconOnly)
                                 .foregroundColor(.white)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.1)
@@ -133,7 +134,7 @@ struct SortListDisclosure: View {
                 print(value.translation.width)
                 if value.translation.width + geo.size.width / 20 > 0 && !deleteModeEnabled { return }
                 let translation = -value.translation.width - geo.size.width / 20
-                withAnimation {
+                withAnimation(.easeIn(duration: 0.25)) {
                     taskExpanded = nil
                     if deleteModeEnabled {
                         if value.translation.width > 0 {
@@ -147,9 +148,15 @@ struct SortListDisclosure: View {
                         }
                     }
                     if xOffset > geo.size.width / 2 {
-                        fullSwipeDelete = true
+                        if !fullSwipeDelete {
+                            Haptic.medium()
+                            fullSwipeDelete = true
+                        }
                     } else {
-                        fullSwipeDelete = false
+                        if fullSwipeDelete {
+                            Haptic.light()
+                            fullSwipeDelete = false
+                        }
                     }
                 }
             }

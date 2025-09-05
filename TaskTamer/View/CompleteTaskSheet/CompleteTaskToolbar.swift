@@ -13,10 +13,10 @@ struct CompleteTaskToolbar: View {
         Button {
             vm.showingPreviousTaskSheet = true
         } label: {
-            if vm.previousTasks.isEmpty {
-                Label("Complete Tasks", systemImage: "bell")
+            if vm.incompleteTasks.isEmpty {
+                Label("Complete Tasks", systemImage: "calendar.badge.checkmark")
             } else {
-                Label("Complete Tasks", systemImage: "bell.badge")
+                Label("Complete Tasks", systemImage: "calendar.badge.exclamationmark")
                 .symbolRenderingMode(.palette)
                 .foregroundStyle(Color.red,Color.accentColor,Color.primary)
             }

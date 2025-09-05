@@ -53,7 +53,7 @@ struct SortListView: View {
                                         addTask()
                                     }
                                 } label: {
-                                    Image(systemName: "plus.circle")
+                                    Image(systemName: "plus")
                                         .foregroundColor(.accentColor)
                                 }
                             }

@@ -4,5 +4,9 @@
 <dict>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Need permission to update task times from Calendar</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Need permission to create calendar event for task</string>
 </dict>
 </plist>

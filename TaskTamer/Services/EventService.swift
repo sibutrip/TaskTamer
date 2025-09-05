@@ -33,7 +33,14 @@ class EventService {
     public func updateTaskTimes(for tasks: [Scheduleable]) -> [Scheduleable] {
         return tasks.map { task in
             var task = task
-            guard let eventID = task.eventID, let event = eventStore.event(withIdentifier: eventID) else { return task }
+            guard let eventID = task.eventID, let event = eventStore.event(withIdentifier: eventID) else {
+                print("couldnt find task \(task.eventTitle)")
+                Task {
+                    // user
+                    await requestCalendarPermission(for: .full)
+                }
+                return task
+            }
             let startDate = event.startDate
             let endDate = event.endDate
             task.startDate = startDate
@@ -70,7 +77,7 @@ class EventService {
         
         guard let calendar = eventStore.defaultCalendarForNewEvents else { fatalError("no default cal found. let user select a calendar.")}
         let predicate = eventStore.predicateForEvents(withStart: DateComponents.midnight.date!, end: endDate, calendars: [calendar])
-        var events = eventStore.events(matching: predicate)
+        let events = eventStore.events(matching: predicate)
             .filter { $0.endDate <= endDate && $0.endDate > startDate }
         let freeTime = freeTime(in: events, from: startDate, to: endDate)
         let availableDates = freeTime

@@ -11,62 +11,76 @@ import SwiftUI
 struct PreviousTaskSheet: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: ViewModel
-    @State var selectedTasks: [TaskItem] = []
     var body: some View {
         NavigationStack {
-            Group {
-                if vm.previousTasks.isEmpty {
-                    VStack {
-                        Text("No previous tasks to mark as complete!")
-                        Text("Sorted tasks from the past will appear here.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                } else {
-                    Form {
-                        Section("Previous Tasks") {
-                            List(vm.previousTasks) { task in
-                                Button {
+            Form {
+                Section("Incomplete Tasks") {
+                    if vm.incompleteTasks.isEmpty {
+                        VStack {
+                            Text("No previous tasks to mark as complete!")
+                            Text("Sorted tasks from the past will appear here.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    } else {
+                        List(vm.incompleteTasks) { task in
+                            HStack {
+                                Text(task.name)
+                                Spacer()
+                                Button("Mark complete", systemImage: "checkmark.circle") {
                                     withAnimation(.default.speed(2.5)) {
-                                        if selectedTasks.contains(where: { $0 == task }) {
-                                            selectedTasks.removeAll { $0 == task }
-                                        } else {
-                                            selectedTasks.append(task)
-                                        }
+                                        vm.complete(task)
                                     }
-                                } label: {
-                                    HStack {
-                                        Image(systemName: selectedTasks.contains { $0 == task } ? "checkmark.square" : "square")
-                                        Text(task.name)
-                                        Spacer()
-                                    }
-                                    .contentShape(Rectangle())
                                 }
+                                .foregroundStyle(Color.green)
+                                .labelStyle(.iconOnly)
+                                .font(.title2)
+                                .buttonStyle(.plain)
+                                Button("Mark incomplete", systemImage: "x.circle") {
+                                    Task { await vm.unschedule(task) }
+                                }
+                                .foregroundStyle(Color.red)
+                                .labelStyle(.iconOnly)
+                                .font(.title2)
                                 .buttonStyle(.plain)
                             }
+                            .contentShape(Rectangle())
                         }
-                        Button("Mark Selected as Complete") {
-                            selectedTasks.forEach { task in
-                                Task {
-                                    do {
-                                        try await vm.delete(task)
-                                    } catch { print(error.localizedDescription) }
-                                }
+                    }
+                }
+                if !vm.completedTasks.isEmpty {
+                    Section("Completed Tasks") {
+                        List {
+                            ForEach(vm.completedTasks) { task in
+                                Text(task.name)
+                                    .modifier(AllTasksContextMenu(task: task, vm: vm))
+                                    .modifier(Unsort($vm.tasks, task, vm))
                             }
-                            vm.tasks.removeAll { task in
-                                selectedTasks.contains { $0 == task }
+                            .onDelete { indexSet in
+                                let tasksToDelete = indexSet.map { vm.completedTasks[$0] }
+                                vm.tasks.removeAll(where: tasksToDelete.contains)
                             }
-                            dismiss()
                         }
-                        .disabled(selectedTasks.isEmpty)
                     }
                 }
             }
             .navigationTitle("Previous Tasks")
         }
     }
-    
+
     init(_ vm: ViewModel) {
         self.vm = vm
     }
+}
+
+#Preview {
+    let vm = ViewModel()
+    var completedTask = TaskItem(name: "completed task")
+    completedTask.sortStatus = .complete
+    var previousTask = TaskItem(name: "previous task")
+    previousTask.sortStatus = .previous
+    //    vm.tasks = [previousTask]
+    //    vm.tasks = [completedTask]
+    vm.tasks = [completedTask, previousTask]
+    return PreviousTaskSheet(vm)
 }

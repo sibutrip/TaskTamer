@@ -12,7 +12,13 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
     var eventID: String?
     var eventTitle: String { name }
     let name: String
-    var sortStatus: SortStatus = .unsorted
+    var sortStatus: SortStatus = .unsorted {
+        didSet {
+            if sortStatus == .previous {
+                return
+            }
+        }
+    }
     var startDate: Date?
     var endDate: Date?
     var scheduleDescription: String {
@@ -40,6 +46,8 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
             return "Unsorted"
         case .previous:
             return "Previous"
+        case .complete:
+            return "Complete"
         }
     }
     
@@ -55,12 +63,11 @@ struct TaskItem: Identifiable, Equatable, Codable, Scheduleable {
         self.name = try container.decode(String.self, forKey: .name)
         self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
         self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
-        if let endDate = endDate {
-            if Date() > endDate {
-                self.sortStatus = .previous
-            } else {
-                self.sortStatus = try container.decode(SortStatus.self, forKey: .sortStatus)
-            }
+        let sortStatus = try container.decode(SortStatus.self, forKey: .sortStatus)
+        if let endDate = endDate, Date() > endDate && sortStatus != .complete {
+            self.sortStatus = .previous
+        } else {
+            self.sortStatus = sortStatus
         }
     }
     

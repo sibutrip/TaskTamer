@@ -14,7 +14,7 @@ struct AllTasksContextMenu: ViewModifier {
     func body(content: Content) -> some View {
         content
             .contextMenu {
-                if !((task.sortStatus == .sorted(.other)) ^ (task.sortStatus.case ==  .skipped) ^ (task.sortStatus == .unsorted)) {
+                if task.sortStatus.canEditDuration {
                     Menu {
                         ForEach(Array(stride(from: 15, to: 241, by: 15)), id:\.self) { minutes in
                             let timeInterval = TimeInterval(minutes * 60)
@@ -28,7 +28,6 @@ struct AllTasksContextMenu: ViewModifier {
                     } label: {
                         Label("Edit Duration", systemImage: "timer")
                     }
-                    
                 }
                 Menu {
                     ForEach(Time.days) { day in
@@ -72,6 +71,8 @@ struct AllTasksContextMenu: ViewModifier {
             case .skipped(let skip):
                 timeSelection = skip
             case .previous, .unsorted:
+                return
+            case .complete:
                 return
             }
             await vm.reschedule(task, within: timeSelection, with: duration)

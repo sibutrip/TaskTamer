@@ -40,17 +40,26 @@ class ViewModel: ObservableObject {
             .sorted { $0.name < $1.name }
     }
     
-    var previousTasks: [TaskItem] {
+    var incompleteTasks: [TaskItem] {
         tasks
-            .filter { return $0.sortStatus == .previous }
+            .filter { $0.sortStatus == .previous }
             .sorted { $0.name < $1.name }
     }
-    
+
+    var completedTasks: [TaskItem] {
+        tasks
+            .filter { $0.sortStatus == .complete }
+            .sorted { $0.name < $1.name }
+    }
+
     public func refreshTasks() {
-        guard let tasks = eventService.updateTaskTimes(for: tasks) as? [TaskItem] else { return }
+        var tasks = tasks
+        let tasksToRefresh = tasks.filter { $0.sortStatus != .unsorted }
+        guard let refreshedTasks = eventService.updateTaskTimes(for: tasksToRefresh) as? [TaskItem] else { return }
+        tasks.replace(with: refreshedTasks)
         refreshSortStatus(for: tasks)
     }
-    
+
     private func refreshSortStatus(for tasks: [TaskItem]) {
         let morningStart = morningStartTime.adjustedToCurrentDay
         let morningEnd = morningEndTime.adjustedToCurrentDay
@@ -61,7 +70,9 @@ class ViewModel: ObservableObject {
         
         self.tasks = tasks.map { task in
             var task = task
-            guard let startDate = task.startDate, let endDate = task.endDate else { return task }
+            guard let startDate = task.startDate,
+                  let endDate = task.endDate,
+                  task.sortStatus != .complete else { return task }
             if endDate < Date() {
                 task.sortStatus = .previous
                 return task
@@ -80,7 +91,7 @@ class ViewModel: ObservableObject {
         }
     }
     
-    public func unscheduleTask(_ task: TaskItem) async {
+    public func unschedule(_ task: TaskItem) async {
         var task = task
         var tasks = self.tasks
         if let _ = task.startDate {
@@ -118,7 +129,15 @@ class ViewModel: ObservableObject {
         }
         self.tasks = tasks
     }
-    
+
+    public func complete(_ task: TaskItem) {
+        var task = task
+        task.sortStatus = .complete
+        var tasks = tasks.filter { $0.id != task.id }
+        tasks.append(task)
+        self.tasks = tasks
+    }
+
     /// Schedules a task at a start time with a given duration
     /// - Parameter task: TaskItem to schedule
     /// - Parameter time: the start time of the task. If no time is selected, a random, valid time will be generated

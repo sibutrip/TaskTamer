@@ -15,27 +15,26 @@ struct AllTasksRowView: View {
     
     var scheduleColor: Color {
         switch task.sortStatus {
-            
         case .sorted(let status):
             switch status {
-                
             case .morning, .afternoon, .evening, .other:
-                return Color.green
+                Color.green
             default:
-                return Color.black
+                Color.black
             }
         case .skipped(let status):
             switch status {
-                
             case .skip1,.skip3,.skip7:
-                return Color.red
+                Color.red
             default:
-                return Color.black
+                Color.black
             }
         case .unsorted:
-            return Color.primary
+            Color.primary
         case .previous:
-            return Color.red
+            Color.red
+        case .complete:
+            Color.gray
         }
     }
     
@@ -46,7 +45,7 @@ struct AllTasksRowView: View {
                 Text(task.name)
                 Spacer()
             }
-            if !((task.sortStatus != .previous) ^ (task.sortStatus != .unsorted)) {
+            if task.sortStatus.showScheduleDescription {
                 Text(task.scheduleDescription)
                     .font(.caption)
                     .foregroundColor(scheduleColor)
@@ -67,6 +66,7 @@ struct AllTasksRowView: View {
                 }
             } label: {
                 Label("Delete", systemImage: "trash")
+                    .labelStyle(.iconOnly)
             }
             .tint(.red)
         }

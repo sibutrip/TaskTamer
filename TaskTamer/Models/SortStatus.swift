@@ -9,36 +9,39 @@ import Foundation
 
 enum SortStatus: Equatable, Codable {
     
-    enum Case{
-        case sorted, skipped, previous, unsorted
+    enum Case {
+        case sorted, skipped, previous, unsorted, complete
     }
     
     case sorted(TimeSelection)
     case skipped(TimeSelection)
     case previous
     case unsorted
-    
+    case complete
+
     var timeSelection: TimeSelection? {
         switch self {
         case .sorted(let timeSelection):
-            return timeSelection
+            timeSelection
         case .skipped(let timeSelection):
-            return timeSelection
-        case .previous, .unsorted:
-            return nil
+            timeSelection
+        case .previous, .unsorted, .complete:
+            nil
         }
     }
     
     var `case`: Case {
         switch self {
         case .sorted(_):
-            return .sorted
+            .sorted
         case .skipped(_):
-            return .skipped
+            .skipped
         case .previous:
-            return .previous
+            .previous
         case .unsorted:
-            return .unsorted
+            .unsorted
+        case .complete:
+            .complete
         }
     }
     
@@ -47,27 +50,29 @@ enum SortStatus: Equatable, Codable {
         case .sorted(let timeSelection):
             switch timeSelection {
             case .morning:
-                return "Morning"
+                "Morning"
             case .afternoon:
-                return "Afternoon"
+                "Afternoon"
             case .evening:
-                return "Evening"
+                "Evening"
             case .other:
-                return "Other"
+                "Other"
             default:
-                return ""
+                ""
             }
         case .skipped(let skipSelection):
             switch skipSelection {
             case .skip1, .skip3, .skip7:
-                return "Skipped"
+                "Skipped"
             default:
-                return ""
+                ""
             }
         case .unsorted:
-            return "Unsorted"
+            "Unsorted"
         case .previous:
-            return "Previous"
+            "Previous"
+        case .complete:
+            "Complete"
         }
     }
     
@@ -81,6 +86,22 @@ enum SortStatus: Equatable, Codable {
             true
         case .unsorted:
             false
+        case .complete:
+            true
         }
+    }
+
+    var canEditDuration: Bool {
+        self != .sorted(.other) &&
+        self.case != .skipped &&
+        self != .previous &&
+        self != .unsorted &&
+        self != .complete
+    }
+
+    var showScheduleDescription: Bool {
+        self != .previous &&
+        self != .unsorted &&
+        self != .complete
     }
 }

@@ -15,4 +15,8 @@ class Haptic {
         let medium = UIImpactFeedbackGenerator(style: .medium)
         medium.impactOccurred()
     }
+    static func light() {
+        let medium = UIImpactFeedbackGenerator(style: .light)
+        medium.impactOccurred()
+    }
 }

@@ -11,7 +11,8 @@ struct AllTasksView: View {
 //    @Environment(\.defaultMinListRowHeight) var minRow
     @ObservedObject var vm: ViewModel
     @Environment(\.scenePhase) private var scenePhase
-    
+
+    /// tasks should appear in order morning -> Afternoon -> evening -> other -> skipped -> unsorted -> previous -> completed
     var sortedTaskTimes: [Dictionary<String, [TaskItem]>.Element] {
         var taskTimes: [String:[TaskItem]] = [:]
         for task in vm.tasks {
@@ -56,6 +57,10 @@ struct AllTasksView: View {
                 return true
             } else if second.key == "Unsorted" {
                 return false
+            }  else if first.key == "Previous" {
+                return true
+            } else if second.key == "Previous" {
+                return false
             }
             return false
         }
@@ -71,6 +76,8 @@ struct AllTasksView: View {
             return .primary
         case .previous:
             return .red
+        case .complete:
+            return .gray
         }
     }
     

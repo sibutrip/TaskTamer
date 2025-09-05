@@ -26,7 +26,7 @@ struct Unsort: ViewModifier {
                     Button {
 //                        withAnimation {
                             Task {
-                                await vm.unscheduleTask(task)
+                                await vm.unschedule(task)
                             }
 //                        }
                     } label: {

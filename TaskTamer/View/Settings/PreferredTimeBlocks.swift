@@ -6,10 +6,18 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct PreferredTimeBlocks: View {
     @Environment(\.dismiss) var dismiss
+
+    @StateObject var notificationManager = NotificationManager()
     @ObservedObject var vm: ViewModel
+
+    @State private var notificationTime: Date = {
+        let components = DateComponents(calendar: .current, hour: 9, minute: 0)
+        return Calendar.current.date(from: components)!
+    }()
     @State var morningStart: Date
     @State var morningEnd: Date
     @State var afternoonStart: Date
@@ -48,29 +56,27 @@ struct PreferredTimeBlocks: View {
                     UIDatePicker.appearance().minuteInterval = 15
                     load()
                 }
-                HStack {
-                    Button {
-                        reset()
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("Reset")
-                                .foregroundColor(.red)
-                            Spacer()
+                .onDisappear {
+                    save()
+                }
+                // TODO: rename file or put this elsewhere
+
+                Section("Notifications") {
+                    Toggle("Enable Notifications", isOn: $notificationManager.isEnabled)
+                    DatePicker("Reminder Time", selection: $notificationManager.reminderTime, displayedComponents: [.hourAndMinute])
+                }
+                .alert("Enable permissions in your settings to receive notifications", isPresented: $notificationManager.triedToEnableButNoPermission) {
+                    HStack {
+                        Button("No thanks", role: .cancel) { notificationManager.triedToEnableButNoPermission = false }
+                        Button("Take me there") {
+                            Task {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    // Ask the system to open that URL.
+                                    await UIApplication.shared.open(url)
+                                }
+                            }
                         }
                     }
-                    .buttonStyle(.bordered)
-                    Spacer()
-                    Button {
-                        save()
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("Save")
-                            Spacer()
-                        }
-                    }
-                    .buttonStyle(.bordered)
                 }
             }
             .navigationTitle("Settings")
