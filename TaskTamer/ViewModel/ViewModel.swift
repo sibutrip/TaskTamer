@@ -54,7 +54,7 @@ class ViewModel: ObservableObject {
 
     public func refreshTasks() {
         var tasks = tasks
-        let tasksToRefresh = tasks.filter { $0.sortStatus != .unsorted }
+        let tasksToRefresh = tasks.filter { $0.sortStatus != .unsorted && $0.sortStatus.case != .skipped }
         guard let refreshedTasks = eventService.updateTaskTimes(for: tasksToRefresh) as? [TaskItem] else { return }
         tasks.replace(with: refreshedTasks)
         refreshSortStatus(for: tasks)

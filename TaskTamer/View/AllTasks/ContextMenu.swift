@@ -16,7 +16,7 @@ struct AllTasksContextMenu: ViewModifier {
             .contextMenu {
                 if task.sortStatus.canEditDuration {
                     Menu {
-                        ForEach(Array(stride(from: 15, to: 241, by: 15)), id:\.self) { minutes in
+                        ForEach([5, 10] + Array(stride(from: 15, to: 241, by: 15)), id:\.self) { minutes in
                             let timeInterval = TimeInterval(minutes * 60)
                             if timeInterval != vm.duration(of: task) {
                                 let formattedTime = Duration.seconds(timeInterval).formatted(.units(allowed: [.hours, .minutes, .seconds], width: .abbreviated, zeroValueUnits: .hide, fractionalPart: .hide))
